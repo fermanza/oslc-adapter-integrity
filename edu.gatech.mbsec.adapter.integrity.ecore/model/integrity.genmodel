@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/edu.gatech.mbsec.adapter.integrity.ecore/src" modelPluginID="edu.gatech.mbsec.adapter.integrity.ecore"
+    modelName="Integrity" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="7.0" copyrightFields="false"
+    operationReflection="true" importOrganizing="true">
+  <foreignModel>integrity.ecore</foreignModel>
+  <genPackages prefix="Integrity" disposableProviderFactory="true" ecorePackage="integrity.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="integrity.ecore#//PriorityEnumeration">
+      <genEnumLiterals ecoreEnumLiteral="integrity.ecore#//PriorityEnumeration/Low"/>
+      <genEnumLiterals ecoreEnumLiteral="integrity.ecore#//PriorityEnumeration/Medium"/>
+      <genEnumLiterals ecoreEnumLiteral="integrity.ecore#//PriorityEnumeration/High"/>
+      <genEnumLiterals ecoreEnumLiteral="integrity.ecore#//PriorityEnumeration/Critical"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="integrity.ecore#//TraceStatusEnumeration">
+      <genEnumLiterals ecoreEnumLiteral="integrity.ecore#//TraceStatusEnumeration/None"/>
+      <genEnumLiterals ecoreEnumLiteral="integrity.ecore#//TraceStatusEnumeration/Downstream"/>
+      <genEnumLiterals ecoreEnumLiteral="integrity.ecore#//TraceStatusEnumeration/DownstreamRelated"/>
+      <genEnumLiterals ecoreEnumLiteral="integrity.ecore#//TraceStatusEnumeration/DownstreamSuspect"/>
+      <genEnumLiterals ecoreEnumLiteral="integrity.ecore#//TraceStatusEnumeration/DownstreamSuspectRelated"/>
+      <genEnumLiterals ecoreEnumLiteral="integrity.ecore#//TraceStatusEnumeration/upstream"/>
+      <genEnumLiterals ecoreEnumLiteral="integrity.ecore#//TraceStatusEnumeration/UpstreamDownstream"/>
+      <genEnumLiterals ecoreEnumLiteral="integrity.ecore#//TraceStatusEnumeration/UpstreamDownstreamRelated"/>
+      <genEnumLiterals ecoreEnumLiteral="integrity.ecore#//TraceStatusEnumeration/UpstreamDownstreamSuspect"/>
+      <genEnumLiterals ecoreEnumLiteral="integrity.ecore#//TraceStatusEnumeration/UpstreamDownstreamSuspectRelated"/>
+      <genEnumLiterals ecoreEnumLiteral="integrity.ecore#//TraceStatusEnumeration/UpstreamRelated"/>
+      <genEnumLiterals ecoreEnumLiteral="integrity.ecore#//TraceStatusEnumeration/UpstreamSuspect"/>
+      <genEnumLiterals ecoreEnumLiteral="integrity.ecore#//TraceStatusEnumeration/UpstreamSuspectDownstream"/>
+      <genEnumLiterals ecoreEnumLiteral="integrity.ecore#//TraceStatusEnumeration/UpstreamSuspectDownstreamRelated"/>
+      <genEnumLiterals ecoreEnumLiteral="integrity.ecore#//TraceStatusEnumeration/UpstreamSuspectDownstreamSuspect"/>
+      <genEnumLiterals ecoreEnumLiteral="integrity.ecore#//TraceStatusEnumeration/UpstreamSuspectDownstreamSuspectRelated"/>
+      <genEnumLiterals ecoreEnumLiteral="integrity.ecore#//TraceStatusEnumeration/UpstreamSuspectRelated"/>
+    </genEnums>
+    <genClasses ecoreClass="integrity.ecore#//Server">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference integrity.ecore#//Server/project"/>
+    </genClasses>
+    <genClasses ecoreClass="integrity.ecore#//Project">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference integrity.ecore#//Project/requirementDocument"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference integrity.ecore#//Project/requirement"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Project/summary"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Project/state"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Project/ID"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Project/modifiedBy"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Project/createdBy"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Project/modifiedDate"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Project/createdDate"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Project/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Project/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Project/alm_Description"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Project/significantEditDate"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Project/project"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Project/alm_ProductManager"/>
+    </genClasses>
+    <genClasses ecoreClass="integrity.ecore#//RequirementDocument">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//RequirementDocument/summary"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//RequirementDocument/state"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference integrity.ecore#//RequirementDocument/project"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//RequirementDocument/alm_SharedText"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//RequirementDocument/alm_DocumentShortTitle"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//RequirementDocument/ID"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//RequirementDocument/modifiedBy"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//RequirementDocument/createdBy"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//RequirementDocument/modifiedDate"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//RequirementDocument/createdDate"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//RequirementDocument/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//RequirementDocument/significantEditDate"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//RequirementDocument/significantChangeSinceItemRevision"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference integrity.ecore#//RequirementDocument/alm_Documents"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference integrity.ecore#//RequirementDocument/contains"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference integrity.ecore#//RequirementDocument/referencedBy"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference integrity.ecore#//RequirementDocument/alm_ChangesAuthorizedBy"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference integrity.ecore#//RequirementDocument/alm_Spawns"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference integrity.ecore#//RequirementDocument/alm_SharedAttachments"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference integrity.ecore#//RequirementDocument/requirement"/>
+    </genClasses>
+    <genClasses ecoreClass="integrity.ecore#//Requirement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/state"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EReference integrity.ecore#//Requirement/project"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference integrity.ecore#//Requirement/attachments"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/parameterValues"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/alm_AuthorizingChangeOrder"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/alm_SuspectCount"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/alm_IncludeReference"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/alm_Priority"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference integrity.ecore#//Requirement/alm_SatisfiedBy"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference integrity.ecore#//Requirement/alm_ValidatedBy"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference integrity.ecore#//Requirement/alm_Spawns"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference integrity.ecore#//Requirement/alm_DecomposesTo"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference integrity.ecore#//Requirement/alm_IsRelatedTo"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/alm_IncludeSubsegmentinMetrics"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/alm_ValidatedByTraceCount"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/alm_TraceStatus"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/alm_DownstreamTraceCount"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/alm_UpstreamTraceCount"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/alm_ValidatedByPassCount"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/alm_ValidatedByPassPercentage"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/alm_CategoryIntValue"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference integrity.ecore#//Requirement/alm_ModelledBy"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference integrity.ecore#//Requirement/alm_VerifiedBy"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/alm_VerifiedByPassCount"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/alm_VerifiedByTraceCount"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/alm_VerifiedByPassPercentage"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference integrity.ecore#//Requirement/alm_ChangesAuthorizedBy"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference integrity.ecore#//Requirement/alm_DecomposedFrom"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/alm_ValidChangeOrder"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/alm_ValidatedByTraceHealth"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/alm_VerifiedByTraceHealth"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/alm_Text"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/alm_ProjectState"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/alm_ProjectPhaseFVA"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/ID"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/modifiedBy"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/createdBy"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/modifiedDate"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/createdDate"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/category"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference integrity.ecore#//Requirement/references"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference integrity.ecore#//Requirement/contains"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference integrity.ecore#//Requirement/containedBy"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/referenceMode"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/documentID"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/referencedItemType"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference integrity.ecore#//Requirement/shares"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference integrity.ecore#//Requirement/sharedBy"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/rootID"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/inputRevisionDate"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/significantEditDate"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Requirement/significantChangeSinceItemRevision"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference integrity.ecore#//Requirement/requirementDocument"/>
+    </genClasses>
+    <genClasses ecoreClass="integrity.ecore#//Item">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Item/ID"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference integrity.ecore#//Item/field"/>
+    </genClasses>
+    <genClasses ecoreClass="integrity.ecore#//Field">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Field/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute integrity.ecore#//Field/value"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>
