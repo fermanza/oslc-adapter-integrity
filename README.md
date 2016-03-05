@@ -1,7 +1,7 @@
 # oslc-adapter-integrity
 
 
-Create a folder named lib under ${project.basedir}/src/main/webapp/WEB-INF/
-Copy your local  mksapi.jar into the new lib folder
+1. Create a folder named lib under ${project.basedir}/src/main/webapp/WEB-INF/
+2. Copy your local  mksapi.jar into the new lib folder
 
 
