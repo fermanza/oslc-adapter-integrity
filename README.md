@@ -1,3 +1,7 @@
 # oslc-adapter-integrity
 
-In the pom.xml, point the Maven dependency to mksapi.jar to your local  mksapi.jar
+
+Create a folder named lib under ${project.basedir}/src/main/webapp/WEB-INF/
+Copy your local  mksapi.jar into the new lib folder
+
+
