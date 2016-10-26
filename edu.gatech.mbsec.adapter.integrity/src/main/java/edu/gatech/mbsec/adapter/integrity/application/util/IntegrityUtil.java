@@ -117,7 +117,7 @@ public class IntegrityUtil {
 			}
 		} catch (APIException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println(e.toString());	
 		}
 
 		return fieldNameListBuffer.toString();
@@ -209,6 +209,10 @@ public class IntegrityUtil {
 	}
 	
 	public static void getAllProjects(Session session) {
+		/**
+		 * Updates static variable "projectNameIDMap" with 
+		 * Updates static variable "integrityIDURIMap" with 
+		 */
 		CmdRunner queryProjectsCmdRunner;
 		try {
 			queryProjectsCmdRunner = session.createCmdRunner();
