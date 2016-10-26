@@ -56,7 +56,7 @@ public class OSLC4JIntegrityApplication extends OslcWinkApplication {
 	public static String localConfigFilePath = "oslc4jintegrity configuration/config.properties";
 	public static String configFilePath = null;
 	
-	public static String integrityHostName = "lsdewcs9.sdde.xxxxx.com";
+	public static String integrityHostName = "lsdewcs9.sdde.xxxxx.com"; // Will get updated from config.properties file below.
 	
 	static {	
 		
