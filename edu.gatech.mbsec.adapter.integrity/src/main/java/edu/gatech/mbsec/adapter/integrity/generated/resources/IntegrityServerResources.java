@@ -208,8 +208,9 @@ public class IntegrityServerResources{
 			queryCmdRunner = session.createCmdRunner();
 			Command queryCommand = new Command(Command.IM, "issues");
 			OptionList queryList = new OptionList();
-			queryList.add("hostname", "ldxwcs1.dx.xxxxx.com");
-			queryList.add("query", "All Requirements");
+			queryList.add("hostname", OSLC4JIntegrityApplication.integrityHostName);
+			//queryList.add("query", "All Requirements");
+			queryList.add("query", "SkidSteerRelated");
 			String fieldNameList = IntegrityUtil.getItemTypeFieldNames("Requirement", session);
 			queryList.add("fields",fieldNameList);
 			queryCommand.setOptionList(queryList);
@@ -221,7 +222,7 @@ public class IntegrityServerResources{
 				CmdRunner createQueryCmdRunner = session.createCmdRunner();
 				Command createQueryCommand = new Command(Command.IM, "createquery");
 				OptionList createQueryOptionList = new OptionList();
-				createQueryOptionList.add("hostname", "ldxwcs1.dx.xxxxx.com");
+				createQueryOptionList.add("hostname", OSLC4JIntegrityApplication.integrityHostName);
 				createQueryOptionList.add("name", "All Requirements");
 				createQueryOptionList.add("queryDefinition", "(field[Type]=Requirement)");
 				createQueryCommand.setOptionList(createQueryOptionList);
@@ -236,7 +237,7 @@ public class IntegrityServerResources{
 				queryCmdRunner = session.createCmdRunner();
 				Command queryCommand = new Command(Command.IM, "issues");
 				OptionList queryList = new OptionList();
-				queryList.add("hostname", "ldxwcs1.dx.xxxxx.com");
+				queryList.add("hostname", OSLC4JIntegrityApplication.integrityHostName);
 				queryList.add("query", "All Requirements");
 				String fieldNameList = IntegrityUtil.getItemTypeFieldNames("Requirement", session);
 				queryList.add("fields",fieldNameList);
@@ -299,7 +300,7 @@ public class IntegrityServerResources{
 			queryCmdRunner = session.createCmdRunner();
 			Command queryCommand = new Command(Command.IM, "issues");
 			OptionList queryList = new OptionList();
-			queryList.add("hostname", "ldxwcs1.dx.xxxxx.com");
+			queryList.add("hostname", OSLC4JIntegrityApplication.integrityHostName);
 			queryList.add("query", "All System Hierarchys");
 			String fieldNameList = IntegrityUtil.getItemTypeFieldNames("System Hierarchy", session);
 			queryList.add("fields",fieldNameList);
@@ -312,7 +313,7 @@ public class IntegrityServerResources{
 				CmdRunner createQueryCmdRunner = session.createCmdRunner();
 				Command createQueryCommand = new Command(Command.IM, "createquery");
 				OptionList createQueryOptionList = new OptionList();
-				createQueryOptionList.add("hostname", "ldxwcs1.dx.xxxxx.com");
+				createQueryOptionList.add("hostname", OSLC4JIntegrityApplication.integrityHostName);
 				createQueryOptionList.add("name", "All System Hierarchys");
 				createQueryOptionList.add("queryDefinition", "(field[Type]=System Hierarchy)");
 				createQueryCommand.setOptionList(createQueryOptionList);
@@ -327,7 +328,7 @@ public class IntegrityServerResources{
 				queryCmdRunner = session.createCmdRunner();
 				Command queryCommand = new Command(Command.IM, "issues");
 				OptionList queryList = new OptionList();
-				queryList.add("hostname", "ldxwcs1.dx.xxxxx.com");
+				queryList.add("hostname", OSLC4JIntegrityApplication.integrityHostName);
 				queryList.add("query", "All System Hierarchys");
 				String fieldNameList = IntegrityUtil.getItemTypeFieldNames("System Hierarchy", session);
 				queryList.add("fields",fieldNameList);
@@ -390,7 +391,7 @@ public class IntegrityServerResources{
 			queryCmdRunner = session.createCmdRunner();
 			Command queryCommand = new Command(Command.IM, "issues");
 			OptionList queryList = new OptionList();
-			queryList.add("hostname", "ldxwcs1.dx.xxxxx.com");
+			queryList.add("hostname", OSLC4JIntegrityApplication.integrityHostName);
 			queryList.add("query", "All System Elements");
 			String fieldNameList = IntegrityUtil.getItemTypeFieldNames("System Element", session);
 			queryList.add("fields",fieldNameList);
@@ -403,7 +404,7 @@ public class IntegrityServerResources{
 				CmdRunner createQueryCmdRunner = session.createCmdRunner();
 				Command createQueryCommand = new Command(Command.IM, "createquery");
 				OptionList createQueryOptionList = new OptionList();
-				createQueryOptionList.add("hostname", "ldxwcs1.dx.xxxxx.com");
+				createQueryOptionList.add("hostname", OSLC4JIntegrityApplication.integrityHostName);
 				createQueryOptionList.add("name", "All System Elements");
 				createQueryOptionList.add("queryDefinition", "(field[Type]=System Element)");
 				createQueryCommand.setOptionList(createQueryOptionList);
@@ -418,7 +419,7 @@ public class IntegrityServerResources{
 				queryCmdRunner = session.createCmdRunner();
 				Command queryCommand = new Command(Command.IM, "issues");
 				OptionList queryList = new OptionList();
-				queryList.add("hostname", "ldxwcs1.dx.xxxxx.com");
+				queryList.add("hostname", OSLC4JIntegrityApplication.integrityHostName);
 				queryList.add("query", "All System Elements");
 				String fieldNameList = IntegrityUtil.getItemTypeFieldNames("System Element", session);
 				queryList.add("fields",fieldNameList);
@@ -481,7 +482,7 @@ public class IntegrityServerResources{
 			queryCmdRunner = session.createCmdRunner();
 			Command queryCommand = new Command(Command.IM, "issues");
 			OptionList queryList = new OptionList();
-			queryList.add("hostname", "ldxwcs1.dx.xxxxx.com");
+			queryList.add("hostname", OSLC4JIntegrityApplication.integrityHostName);
 			queryList.add("query", "All Function Hierarchys");
 			String fieldNameList = IntegrityUtil.getItemTypeFieldNames("Function Hierarchy", session);
 			queryList.add("fields",fieldNameList);
@@ -494,7 +495,7 @@ public class IntegrityServerResources{
 				CmdRunner createQueryCmdRunner = session.createCmdRunner();
 				Command createQueryCommand = new Command(Command.IM, "createquery");
 				OptionList createQueryOptionList = new OptionList();
-				createQueryOptionList.add("hostname", "ldxwcs1.dx.xxxxx.com");
+				createQueryOptionList.add("hostname", OSLC4JIntegrityApplication.integrityHostName);
 				createQueryOptionList.add("name", "All Function Hierarchys");
 				createQueryOptionList.add("queryDefinition", "(field[Type]=Function Hierarchy)");
 				createQueryCommand.setOptionList(createQueryOptionList);
@@ -509,7 +510,7 @@ public class IntegrityServerResources{
 				queryCmdRunner = session.createCmdRunner();
 				Command queryCommand = new Command(Command.IM, "issues");
 				OptionList queryList = new OptionList();
-				queryList.add("hostname", "ldxwcs1.dx.xxxxx.com");
+				queryList.add("hostname", OSLC4JIntegrityApplication.integrityHostName);
 				queryList.add("query", "All Function Hierarchys");
 				String fieldNameList = IntegrityUtil.getItemTypeFieldNames("Function Hierarchy", session);
 				queryList.add("fields",fieldNameList);
@@ -572,7 +573,7 @@ public class IntegrityServerResources{
 			queryCmdRunner = session.createCmdRunner();
 			Command queryCommand = new Command(Command.IM, "issues");
 			OptionList queryList = new OptionList();
-			queryList.add("hostname", "ldxwcs1.dx.xxxxx.com");
+			queryList.add("hostname", OSLC4JIntegrityApplication.integrityHostName);
 			queryList.add("query", "All Functions");
 			String fieldNameList = IntegrityUtil.getItemTypeFieldNames("Function", session);
 			queryList.add("fields",fieldNameList);
@@ -585,7 +586,7 @@ public class IntegrityServerResources{
 				CmdRunner createQueryCmdRunner = session.createCmdRunner();
 				Command createQueryCommand = new Command(Command.IM, "createquery");
 				OptionList createQueryOptionList = new OptionList();
-				createQueryOptionList.add("hostname", "ldxwcs1.dx.xxxxx.com");
+				createQueryOptionList.add("hostname", OSLC4JIntegrityApplication.integrityHostName);
 				createQueryOptionList.add("name", "All Functions");
 				createQueryOptionList.add("queryDefinition", "(field[Type]=Function)");
 				createQueryCommand.setOptionList(createQueryOptionList);
@@ -600,7 +601,7 @@ public class IntegrityServerResources{
 				queryCmdRunner = session.createCmdRunner();
 				Command queryCommand = new Command(Command.IM, "issues");
 				OptionList queryList = new OptionList();
-				queryList.add("hostname", "ldxwcs1.dx.xxxxx.com");
+				queryList.add("hostname", OSLC4JIntegrityApplication.integrityHostName);
 				queryList.add("query", "All Functions");
 				String fieldNameList = IntegrityUtil.getItemTypeFieldNames("Function", session);
 				queryList.add("fields",fieldNameList);
