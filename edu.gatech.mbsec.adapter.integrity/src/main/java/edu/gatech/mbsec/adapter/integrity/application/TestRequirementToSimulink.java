@@ -1,6 +1,7 @@
 package edu.gatech.mbsec.adapter.integrity.application;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -8,8 +9,10 @@ import com.mks.api.CmdRunner;
 import com.mks.api.Command;
 import com.mks.api.IntegrationPoint;
 import com.mks.api.IntegrationPointFactory;
+import com.mks.api.Option;
 import com.mks.api.OptionList;
 import com.mks.api.Session;
+import com.mks.api.response.APIException;
 import com.mks.api.response.Field;
 import com.mks.api.response.Item;
 import com.mks.api.response.ItemList;
@@ -58,14 +61,16 @@ public class TestRequirementToSimulink {
 		Session session = null;		
 		try {
 			integrationPoint = integrationPointFactory.createLocalIntegrationPoint(4, 16);
+			
 			session = integrationPoint.getCommonSession();
-
+			
 			CmdRunner queryCmdRunner;
 			Response queryResponse = null;
 
 			try {
 				queryCmdRunner = session.createCmdRunner();
-				Command queryCommand = new Command(Command.IM, "issues");
+				// "im issues" -> presents issues found in the query results for the specified query. You can also choose the columns to use in displaying the issues view information 
+				Command queryCommand = new Command(Command.IM, "issues"); 
 				OptionList queryList = new OptionList();
 
 				String queryName = "SkidSteerRelated_OnlyRequirement";
@@ -157,16 +162,86 @@ public class TestRequirementToSimulink {
 								System.out.println("Reading Contains field");
 								Object fieldValue = field.getValue();
 								ItemList itemList = (ItemList) fieldValue;
-								Iterator<Item> itemIterator = itemList.getItems();
-								while(itemIterator.hasNext()) {
-									Item item = itemIterator.next();
-									System.out.println(item.toString());
-									System.out.println("");
-								}
-								if(itemList!=null){									
-								} else { fieldTextColon = "null";}
-								System.out.println("Text field = " + fieldTextColon);
+								ArrayList<Integer> containedReqIds = new ArrayList<Integer>();
+								if(itemList!=null){	
+									Iterator<Item> itemIterator = itemList.getItems();
+									while(itemIterator.hasNext()) {
+										// get IDs for each item
+										Item item = itemIterator.next();
+										containedReqIds.add(Integer.parseInt(item.getId()));
+										System.out.println("Contained Requirement id: " + item.getId());
+										// System.out.println(item.toString());
+										System.out.println("");
+									}
+								} 
+								System.out.println("Requirement Ids to read in: " + containedReqIds.toString());
 								System.out.println("");
+																
+								if (!containedReqIds.isEmpty()) {
+									System.out.println("Creating query to read in the requirements found above");									
+									//create query
+									try {
+										/*
+										// try to delete query if it already exists before creating new one. 
+										try {											
+											CmdRunner deleteQueryCmdRunner = session.createCmdRunner();
+											// Command deleteQueryCommand = new Command(Command.IM, "deletequery" + " --noconfirm" + " --hostname=" + OSLC4JIntegrityApplication.integrityHostName + " \"Find Contained Requirements\"");
+											Command deleteQueryCommand = new Command(Command.IM, "deletequery");
+											OptionList deleteQueryOptionList = new OptionList();
+											deleteQueryOptionList.add("noconfirm",null);
+											deleteQueryOptionList.add("hostname", OSLC4JIntegrityApplication.integrityHostName);
+											// Option opt1 = new Option("\"Find Contained Requirements\"");
+											//deleteQueryOptionList.add(opt1);	
+											// deleteQueryOptionList.add("me:\"Find Contained Requirements\"",null);
+											// Option opt2 = new Option("noconfirm");
+											// deleteQueryOptionList.add(opt2);	
+											deleteQueryCommand.setOptionList(deleteQueryOptionList);
+											deleteQueryCommand.addSelection("test Delete");
+											Response deleteQueryResponse = deleteQueryCmdRunner.execute(deleteQueryCommand);
+											System.out.println(deleteQueryResponse);
+											System.out.println("");
+										} catch (APIException e) {
+											System.err.println(e.getMessage());
+											System.err.println("");
+										}	
+										*/
+											/*																		
+										CmdRunner createQueryCmdRunner = session.createCmdRunner();
+										Command createQueryCommand = new Command(Command.IM, "createquery");
+										OptionList createQueryOptionList = new OptionList();
+										createQueryOptionList.add("name", "Find Contained Requirements");
+										// this will add a query to the client GUI as well. Therefore it errors out
+										// after the query has been created once. Find alternative option.
+										String queryDefString = "((field[ID]=" + containedReqIds.get(0) + ")or(field[ID]=" + containedReqIds.get(1) + "))"; // overall grouping () is required.  
+										createQueryOptionList.add("queryDefinition", queryDefString);
+										createQueryCommand.setOptionList(createQueryOptionList);
+										Response createQueryResponse = createQueryCmdRunner.execute(createQueryCommand);
+										System.out.println(createQueryResponse);
+										System.out.println("");
+										*/
+										
+										// keep updating the existing quick query										
+										CmdRunner quickQueryCmdRunner = session.createCmdRunner();
+										Command quickQueryCommand = new Command(Command.IM, "editquery");
+										OptionList quickQueryOptionList = new OptionList();
+										//quickQueryOptionList.add("name", "Quick Query");
+										String quickqueryDefString = "((field[ID]=" + containedReqIds.get(0) + ")or(field[ID]=" + containedReqIds.get(1) + "))"; // overall grouping () is required.  
+										quickQueryOptionList.add("queryDefinition", quickqueryDefString);
+										quickQueryCommand.setOptionList(quickQueryOptionList);
+										quickQueryCommand.addSelection("Quick Query");
+										Response quickQueryResponse = quickQueryCmdRunner.execute(quickQueryCommand);
+										System.out.println(quickQueryResponse);
+										System.out.println("");
+										
+										System.out.println("");
+									} catch (APIException e1) {
+										System.err.println(e1.getMessage());
+										System.err.println("");
+										
+									}
+									
+								}
+								
 							}
 						}
 					}
@@ -206,8 +281,10 @@ public class TestRequirementToSimulink {
 					 */
 				}
 				System.out.println(queryResponse.getWorkItems().next().getFields().next().toString());
-				System.out.println("End Integrity API call");
-				System.out.println("");
+				System.out.println("End Integrity API call");				
+				integrationPointFactory.removeIntegrationPoint(integrationPoint);
+				System.out.println("Removing integration point to terminate thread.");
+				
 			} 
 			catch(ItemNotFoundException e){
 				System.err.println(e.toString());
