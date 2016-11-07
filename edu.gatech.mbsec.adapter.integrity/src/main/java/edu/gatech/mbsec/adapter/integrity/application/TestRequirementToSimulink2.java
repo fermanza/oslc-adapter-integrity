@@ -1,11 +1,24 @@
 package edu.gatech.mbsec.adapter.integrity.application;
 
+import java.io.File;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map.Entry;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.mks.api.CmdRunner;
 import com.mks.api.Command;
@@ -68,6 +81,17 @@ public class TestRequirementToSimulink2 {
 
 			CmdRunner queryCmdRunner;
 			Response queryResponse = null;
+
+			// variables used to populate output xml file
+			String xmlStringProject = "";
+			String xmlStringCategory = "";
+			String xmlStringID = "";
+			String xmlStringName = "";
+			String xmlStringText = "";
+			String xmlStringParameterValues = "";
+			HashMap<String, String> xmlParameterValuesMap = new HashMap<String, String>();
+			String xmlStringProductConfiguration = "";
+			String xmlStringSimulationName = "";
 
 			try {
 				queryCmdRunner = session.createCmdRunner();
@@ -143,6 +167,7 @@ public class TestRequirementToSimulink2 {
 								} else {
 									System.out.println("Project is Null");
 								}
+								xmlStringProject = fieldProject;
 								System.out.println("");
 							} else if (field.getName().equals("ID")) {
 								System.out.println("Reading ID field:");
@@ -151,6 +176,7 @@ public class TestRequirementToSimulink2 {
 								Object fieldValue = field.getValue();
 								fieldID = (int) fieldValue;
 								System.out.println("ID field = " + fieldID);
+								xmlStringID = Integer.toString(fieldID);
 								System.out.println("");
 							} else if (field.getName().equals("Type")) {
 								System.out.println("Reading Type field");
@@ -168,6 +194,7 @@ public class TestRequirementToSimulink2 {
 									fieldName = "null";
 								}
 								System.out.println("Name field = " + fieldName);
+								xmlStringName = fieldName;
 								System.out.println("");
 							} else if (field.getName().equals("Category")) {
 								System.out.println("Reading Category field");
@@ -178,6 +205,7 @@ public class TestRequirementToSimulink2 {
 									fieldCategory = "null";
 								}
 								System.out.println("Category field = " + fieldCategory);
+								xmlStringCategory = fieldCategory;
 								System.out.println("");
 							} else if (field.getName().equals("Text")) {
 								System.out.println("Reading Text field");
@@ -188,6 +216,7 @@ public class TestRequirementToSimulink2 {
 									fieldText = "null";
 								}
 								System.out.println("Text field = " + fieldText);
+								xmlStringText = fieldText;
 								System.out.println("");
 							} else if (field.getName().equals("Parameter Values")) {
 								System.out.println("Reading Parameter Values field");
@@ -222,9 +251,11 @@ public class TestRequirementToSimulink2 {
 									}
 								}
 								System.out.println("After parsing, Parameter Values = " + parameterValuesMap);
+								xmlParameterValuesMap = parameterValuesMap;
 								// System.out.println(Arrays.toString(parameterValueRows));
 								// System.out.println("Parameter Values field =
 								// " + fieldParameterValues);
+								xmlStringParameterValues = parameterValuesMap.toString();
 								System.out.println("");
 							} else if (field.getName().equals("Requires")) {
 								// also a way to read "Contains" field
@@ -344,6 +375,9 @@ public class TestRequirementToSimulink2 {
 										}
 										productConfig = requiresRelationHashMap.get("System Element");
 										simulationName = requiresRelationHashMap.get("Function");
+
+										xmlStringProductConfiguration = productConfig;
+										xmlStringSimulationName = simulationName;
 										System.out.println("Product Configuration = " + productConfig);
 										System.out.println("Simulation Name = " + simulationName);
 										System.out.println("");
@@ -368,6 +402,87 @@ public class TestRequirementToSimulink2 {
 			} catch (ItemNotFoundException e) {
 				System.err.println(e.toString());
 			}
+
+			// Create output XML file
+			System.out.println("\n\n");
+			System.out.println("Output XML file section");
+			System.out.println(xmlStringProject);
+			System.out.println(xmlStringCategory);
+			System.out.println(xmlStringID);
+			System.out.println(xmlStringName);
+			System.out.println(xmlStringText);
+			System.out.println(xmlStringParameterValues);
+			System.out.println(xmlStringProductConfiguration);
+			System.out.println(xmlStringSimulationName);
+			System.out.println("");
+
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+
+			// Construct xml file
+			Document doc = docBuilder.newDocument();
+			Element rootElement = doc.createElement("requirement");
+			doc.appendChild(rootElement);
+
+			Element projectElement = doc.createElement("project");
+			projectElement.appendChild(doc.createTextNode(xmlStringProject));
+			rootElement.appendChild(projectElement);
+
+			Element categoryElement = doc.createElement("category");
+			categoryElement.appendChild(doc.createTextNode(xmlStringCategory));
+			rootElement.appendChild(categoryElement);
+
+			Element idElement = doc.createElement("id");
+			idElement.appendChild(doc.createTextNode(xmlStringID));
+			rootElement.appendChild(idElement);
+
+			Element nameElement = doc.createElement("name");
+			nameElement.appendChild(doc.createTextNode(xmlStringName));
+			rootElement.appendChild(nameElement);
+
+			Element textElement = doc.createElement("text");
+			textElement.appendChild(doc.createTextNode(xmlStringText));
+			rootElement.appendChild(textElement);
+
+			// Parameter values
+			Element parameterValuesElement = doc.createElement("parameterValues");
+			// direct string representation of hashmap
+			// parameterValuesElement.appendChild(doc.createTextNode(xmlStringParameterValues));
+			rootElement.appendChild(parameterValuesElement);
+			// go through hash map to generate elements
+			Element parameterValueEntryElement;
+			Iterator iterator = xmlParameterValuesMap.entrySet().iterator();
+			while (iterator.hasNext()) {
+				Entry thisEntry = (Entry) iterator.next();
+				parameterValueEntryElement = doc.createElement((String) thisEntry.getKey());
+				parameterValueEntryElement.appendChild(doc.createTextNode((String) thisEntry.getValue()));
+				parameterValuesElement.appendChild(parameterValueEntryElement);
+			}
+
+			Element productConfigurationElement = doc.createElement("productConfiguration");
+			productConfigurationElement.appendChild(doc.createTextNode(xmlStringProductConfiguration));
+			rootElement.appendChild(productConfigurationElement);
+
+			Element simulationNameElement = doc.createElement("simulationName");
+			simulationNameElement.appendChild(doc.createTextNode(xmlStringSimulationName));
+			rootElement.appendChild(simulationNameElement);
+
+			// write the content into xml file
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+			DOMSource source = new DOMSource(doc);
+			StreamResult result = new StreamResult(new File("C:/MTIC_Data/Requirements_Integration/file.xml"));
+
+			// Output to console for testing
+			// StreamResult result = new StreamResult(System.out);
+
+			transformer.transform(source, result);
+
+			System.out.println("File saved!");
+
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 			System.err.println("");
