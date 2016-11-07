@@ -2,6 +2,7 @@ package edu.gatech.mbsec.adapter.integrity.application;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -60,7 +61,7 @@ public class TestRequirementToSimulink2 {
 
 		IntegrationPointFactory integrationPointFactory = IntegrationPointFactory.getInstance();
 		IntegrationPoint integrationPoint;
-		Session session = null;		
+		Session session = null;
 		try {
 			integrationPoint = integrationPointFactory.createLocalIntegrationPoint(4, 16);
 			
@@ -177,11 +178,32 @@ public class TestRequirementToSimulink2 {
 								System.out.println("");
 							} else if (field.getName().equals("Parameter Values")) {
 								System.out.println("Reading Parameter Values field");
+								// Parameter value data is a string, which is formed of unordered rows (when pasted in text editor). 
+								// Each row is a field for the parameter. It is either semi-colon separated or = separated. 
+								// The equal separated entry represents the value
+								// The semi-colon separated entry represents other properties of the parameter. 
+								// <parameter>;<field>=<value>\n<parameter>=<value>
+								// need to detect ";" or "=" 
 								Object fieldValue = field.getValue();
 								fieldParameterValues = (String) fieldValue;
 								if(fieldParameterValues!=null){									
 								} else { fieldParameterValues = "null";}
-								System.out.println("Parameter Values field = " + fieldParameterValues);
+								String delims = "\n";
+								String[] parameterValueRows = fieldParameterValues.split(delims);
+								String[] tokens;
+								HashMap<String,String> parameterValuesMap = new HashMap<String, String>();
+								for(int i=0; i<parameterValueRows.length; i++){
+									tokens = parameterValueRows[i].split(";");			
+									//System.out.println(tokens.length);
+									if(tokens.length == 1) {
+										tokens = parameterValueRows[i].split("=");
+										//System.out.println(Arrays.toString(tokens));
+										parameterValuesMap.put(tokens[0], tokens[1]);
+									}
+								}
+								System.out.println("After parsing, Parameter Values = " + parameterValuesMap);
+								// System.out.println(Arrays.toString(parameterValueRows));
+								// System.out.println("Parameter Values field = " + fieldParameterValues);
 								System.out.println("");
 							}		
 							else if (field.getName().equals("Requires")) { // also a way to read "Contains" field
@@ -281,7 +303,8 @@ public class TestRequirementToSimulink2 {
 										}
 										productConfig = requiresRelationHashMap.get("System Element");										
 										simulationName = requiresRelationHashMap.get("Function");
-										
+										System.out.println("Product Configuration = " + productConfig);
+										System.out.println("Simulation Name = " + simulationName);
 										System.out.println("");
 									} catch (APIException e1) {
 										System.err.println(e1.getMessage());
@@ -294,40 +317,7 @@ public class TestRequirementToSimulink2 {
 							}
 						}
 					}
-					
-					
 
-					/*
-					String owningProjectID = IntegrityUtil.getProjectID(workItem.getFields());
-
-					String projectId = null;
-					String projectName = IntegrityUtil.getProjectName(workItem.getFields());
-					if(projectName == null | projectName == ""){
-						projectName = "unnamed";
-					} else{
-						projectName = IntegrityUtil.getValidProjectIdOrName(projectName);
-					}
-					if (owningProjectID == null) {
-						projectId = "noproject";
-					} else {
-						owningProjectID = IntegrityUtil.getValidProjectIdOrName(owningProjectID);
-						if(owningProjectID.equals(projectName)){
-							projectId = "project" + projectName;
-						} else{
-							projectId = "project" + owningProjectID + projectName;
-						}
-					}
-					IntegrityRequirement integrityRequirement;
-					try {
-						integrityRequirement = new IntegrityRequirement(java.net.URI.create(IntegrityManager.baseHTTPURI + "/services/"+ projectId + "/requirements/"+ workItem.getId()));
-						IntegrityUtil.iterateThroughFields(workItem.getFields(),	integrityRequirement);
-						qNameOslcIntegrityRequirementMap.put(integrityRequirement.getAbout().toString(),integrityRequirement);
-						oslcIntegrityRequirements.add(integrityRequirement);
-						IntegrityUtil.integrityIDURIMap.put(workItem.getId(),integrityRequirement.getAbout());
-					} catch (URISyntaxException e) {
-						e.printStackTrace();
-					}
-					 */
 				}
 				System.out.println(queryResponse.getWorkItems().next().getFields().next().toString());
 				System.out.println("End Integrity API call");				
