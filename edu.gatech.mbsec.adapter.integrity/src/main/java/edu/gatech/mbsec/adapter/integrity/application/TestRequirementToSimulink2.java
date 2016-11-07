@@ -36,9 +36,9 @@ public class TestRequirementToSimulink2 {
 		// TODO Auto-generated method stub
 
 		Thread thread = new Thread() {
-			public void start(){
+			public void start() {
 				readIntegrityData();
-				//serverResourcesReadFlag.setValue(true);
+				// serverResourcesReadFlag.setValue(true);
 				return;
 			}
 		};
@@ -54,7 +54,6 @@ public class TestRequirementToSimulink2 {
 		System.out.println("Main function finished.");
 	}
 
-
 	public static synchronized void readIntegrityData() {
 
 		System.out.println("Inside Thread");
@@ -64,46 +63,52 @@ public class TestRequirementToSimulink2 {
 		Session session = null;
 		try {
 			integrationPoint = integrationPointFactory.createLocalIntegrationPoint(4, 16);
-			
+
 			session = integrationPoint.getCommonSession();
-			
+
 			CmdRunner queryCmdRunner;
 			Response queryResponse = null;
 
 			try {
 				queryCmdRunner = session.createCmdRunner();
 				// "im editquery" -> edit a query and then execute
-				Command queryCommand = new Command(Command.IM, "editquery"); 
+				Command queryCommand = new Command(Command.IM, "editquery");
 				OptionList queryList = new OptionList();
-				System.out.println("Editing quick query and running");				
+				System.out.println("Editing quick query and running");
 				String queryName = "Quick Query";
 				String queryFields = "Project,ID,Type,Name,Category,Text,Parameter Values,Requires";
-				int reqId = 243828; // TODO: note that this is a custom hard coded value. 
-				queryList.add("hostname", OSLC4JIntegrityApplication.integrityHostName); // the static block in OSLC4JIn... class calls APIs
+				// TODO: note that this is a custom hard coded value.
+				int reqId = 243828;
+				// the static block in OSLC4JIn... class calls APIs
+				queryList.add("hostname", OSLC4JIntegrityApplication.integrityHostName);
 				queryList.add("queryDefinition", "((field[ID]=" + reqId + "))");
 				queryList.add("fields", queryFields);
 				queryCommand.setOptionList(queryList);
 				queryCommand.addSelection(queryName);
 				System.out.println("Running edit query: " + queryName);
-				queryResponse = queryCmdRunner.execute(queryCommand); // async call
+				queryResponse = queryCmdRunner.execute(queryCommand); // async
+																		// call
 				System.out.println("Finished editing query: " + queryName);
-				
-				System.out.println("Running query: " + queryName + " results");				
-				
+
+				System.out.println("Running query: " + queryName + " results");
+
 				queryCmdRunner = session.createCmdRunner();
-				// "im issues" -> presents issues found in the query results for the specified query. You can also choose the columns to use in displaying the issues view information 
-				queryCommand = new Command(Command.IM, "issues"); 
+				// "im issues" -> presents issues found in the query results for
+				// the specified query. You can also choose the columns to use
+				// in displaying the issues view information
+				queryCommand = new Command(Command.IM, "issues");
 				queryList = new OptionList();
-				queryList.add("hostname", OSLC4JIntegrityApplication.integrityHostName); // the static block in OSLC4JIn... class calls APIs
+				// the static block in OSLC4JIn... class calls APIs
+				queryList.add("hostname", OSLC4JIntegrityApplication.integrityHostName);
 				queryList.add("query", queryName);
 				queryList.add("fields", queryFields);
 				queryCommand.setOptionList(queryList);
 				System.out.println("Running query: " + queryName);
-				queryResponse = queryCmdRunner.execute(queryCommand); // async call
+				queryResponse = queryCmdRunner.execute(queryCommand); // async
+																		// call
 				System.out.println("Finished executing query: " + queryName);
 				System.out.println("Processing query: " + queryName + " results");
-			
-				
+
 				System.out.println("Iterating through query results");
 				WorkItemIterator workItemIterator = queryResponse.getWorkItems();
 				int idx = 1;
@@ -132,18 +137,20 @@ public class TestRequirementToSimulink2 {
 								System.out.println("Reading Project field:");
 								Object fieldValue = field.getValue();
 								Item item = (Item) fieldValue;
-								if(item !=null){
+								if (item != null) {
 									fieldProject = item.getId();
 									System.out.println("Project field = " + fieldProject);
+								} else {
+									System.out.println("Project is Null");
 								}
-								else{ System.out.println("Project is Null"); }
 								System.out.println("");
 							} else if (field.getName().equals("ID")) {
-								System.out.println("Reading ID field:");								
-								// note that there is a "field.getDataType()" method that returns the expected output type 
+								System.out.println("Reading ID field:");
+								// note that there is a "field.getDataType()"
+								// method that returns the expected output type
 								Object fieldValue = field.getValue();
 								fieldID = (int) fieldValue;
-								System.out.println("ID field = " + fieldID);								
+								System.out.println("ID field = " + fieldID);
 								System.out.println("");
 							} else if (field.getName().equals("Type")) {
 								System.out.println("Reading Type field");
@@ -156,65 +163,80 @@ public class TestRequirementToSimulink2 {
 								System.out.println("Reading Name field");
 								Object fieldValue = field.getValue();
 								fieldName = (String) fieldValue;
-								if(fieldName!=null){									
-								} else { fieldName = "null";}
+								if (fieldName != null) {
+								} else {
+									fieldName = "null";
+								}
 								System.out.println("Name field = " + fieldName);
 								System.out.println("");
 							} else if (field.getName().equals("Category")) {
 								System.out.println("Reading Category field");
 								Object fieldValue = field.getValue();
 								fieldCategory = (String) fieldValue;
-								if(fieldCategory!=null){									
-								} else { fieldCategory = "null";}
+								if (fieldCategory != null) {
+								} else {
+									fieldCategory = "null";
+								}
 								System.out.println("Category field = " + fieldCategory);
 								System.out.println("");
 							} else if (field.getName().equals("Text")) {
 								System.out.println("Reading Text field");
 								Object fieldValue = field.getValue();
 								fieldText = (String) fieldValue;
-								if(fieldText!=null){									
-								} else { fieldText = "null";}
+								if (fieldText != null) {
+								} else {
+									fieldText = "null";
+								}
 								System.out.println("Text field = " + fieldText);
 								System.out.println("");
 							} else if (field.getName().equals("Parameter Values")) {
 								System.out.println("Reading Parameter Values field");
-								// Parameter value data is a string, which is formed of unordered rows (when pasted in text editor). 
-								// Each row is a field for the parameter. It is either semi-colon separated or = separated. 
-								// The equal separated entry represents the value
-								// The semi-colon separated entry represents other properties of the parameter. 
+								// Parameter value data is a string, which is
+								// formed of unordered rows (when pasted in text
+								// editor).
+								// Each row is a field for the parameter. It is
+								// either semi-colon separated or = separated.
+								// The equal separated entry represents the
+								// value
+								// The semi-colon separated entry represents
+								// other properties of the parameter.
 								// <parameter>;<field>=<value>\n<parameter>=<value>
-								// need to detect ";" or "=" 
+								// need to detect ";" or "="
 								Object fieldValue = field.getValue();
 								fieldParameterValues = (String) fieldValue;
-								if(fieldParameterValues!=null){									
-								} else { fieldParameterValues = "null";}
+								if (fieldParameterValues != null) {
+								} else {
+									fieldParameterValues = "null";
+								}
 								String delims = "\n";
 								String[] parameterValueRows = fieldParameterValues.split(delims);
 								String[] tokens;
-								HashMap<String,String> parameterValuesMap = new HashMap<String, String>();
-								for(int i=0; i<parameterValueRows.length; i++){
-									tokens = parameterValueRows[i].split(";");			
-									//System.out.println(tokens.length);
-									if(tokens.length == 1) {
+								HashMap<String, String> parameterValuesMap = new HashMap<String, String>();
+								for (int i = 0; i < parameterValueRows.length; i++) {
+									tokens = parameterValueRows[i].split(";");
+									// System.out.println(tokens.length);
+									if (tokens.length == 1) {
 										tokens = parameterValueRows[i].split("=");
-										//System.out.println(Arrays.toString(tokens));
+										// System.out.println(Arrays.toString(tokens));
 										parameterValuesMap.put(tokens[0], tokens[1]);
 									}
 								}
 								System.out.println("After parsing, Parameter Values = " + parameterValuesMap);
 								// System.out.println(Arrays.toString(parameterValueRows));
-								// System.out.println("Parameter Values field = " + fieldParameterValues);
+								// System.out.println("Parameter Values field =
+								// " + fieldParameterValues);
 								System.out.println("");
-							}		
-							else if (field.getName().equals("Requires")) { // also a way to read "Contains" field
-								// Contains relationship should provide way to access actual requirements
+							} else if (field.getName().equals("Requires")) {
+								// also a way to read "Contains" field
+								// Contains relationship should provide way to
+								// access actual requirements
 								System.out.println("Reading Requires field");
 								Object fieldValue = field.getValue();
 								ItemList itemList = (ItemList) fieldValue;
 								ArrayList<Integer> requiresRelationshipIDs = new ArrayList<Integer>();
-								if(itemList!=null){	
+								if (itemList != null) {
 									Iterator<Item> itemIterator = itemList.getItems();
-									while(itemIterator.hasNext()) {
+									while (itemIterator.hasNext()) {
 										// get IDs for each item
 										Item item = itemIterator.next();
 										requiresRelationshipIDs.add(Integer.parseInt(item.getId()));
@@ -222,57 +244,70 @@ public class TestRequirementToSimulink2 {
 										// System.out.println(item.toString());
 										System.out.println("");
 									}
-								} 
+								}
 								System.out.println("Requirement Ids to read in: " + requiresRelationshipIDs.toString());
 								System.out.println("");
-																
+
 								if (!requiresRelationshipIDs.isEmpty()) {
-									System.out.println("Creating query to read in the requires relationship elements found above");									
-									//edit and run quick query
+									System.out.println(
+											"Creating query to read in the requires relationship elements found above");
+									// edit and run quick query
 									try {
 										queryCmdRunner = session.createCmdRunner();
-										// "im editquery" -> edit a query and then execute
-										queryCommand = new Command(Command.IM, "editquery"); 
+										// "im editquery" -> edit a query and
+										// then execute
+										queryCommand = new Command(Command.IM, "editquery");
 										queryList = new OptionList();
-										System.out.println("Editing quick query and running");				
+										System.out.println("Editing quick query and running");
 										queryName = "Quick Query";
-										queryFields = "Category,Name";					
-										queryList.add("hostname", OSLC4JIntegrityApplication.integrityHostName); // the static block in OSLC4JIn... class calls APIs
-										queryList.add("queryDefinition", "((field[ID]=" + requiresRelationshipIDs.get(0) + ")or(field[ID]=" + requiresRelationshipIDs.get(1) + "))");
+										queryFields = "Category,Name";
+										queryList.add("hostname", OSLC4JIntegrityApplication.integrityHostName);
+										queryList.add("queryDefinition", "((field[ID]=" + requiresRelationshipIDs.get(0)
+												+ ")or(field[ID]=" + requiresRelationshipIDs.get(1) + "))");
 										queryList.add("fields", queryFields);
 										queryCommand.setOptionList(queryList);
 										queryCommand.addSelection(queryName);
 										System.out.println("Running edit query: " + queryName);
-										queryResponse = queryCmdRunner.execute(queryCommand); // async call
+										queryResponse = queryCmdRunner.execute(queryCommand); // async
+																								// call
 										System.out.println("Finished editing query: " + queryName);
-										
-										System.out.println("Running query: " + queryName + " results");				
-										
+
+										System.out.println("Running query: " + queryName + " results");
+
 										queryCmdRunner = session.createCmdRunner();
-										// "im issues" -> presents issues found in the query results for the specified query. You can also choose the columns to use in displaying the issues view information 
-										queryCommand = new Command(Command.IM, "issues"); 
+										// "im issues" -> presents issues found
+										// in the query results for the
+										// specified query. You can also choose
+										// the columns to use in displaying the
+										// issues view information
+										queryCommand = new Command(Command.IM, "issues");
 										queryList = new OptionList();
-										queryList.add("hostname", OSLC4JIntegrityApplication.integrityHostName); // the static block in OSLC4JIn... class calls APIs
+										queryList.add("hostname", OSLC4JIntegrityApplication.integrityHostName);
 										queryList.add("query", queryName);
 										queryList.add("fields", queryFields);
 										queryCommand.setOptionList(queryList);
 										System.out.println("Running query: " + queryName);
-										queryResponse = queryCmdRunner.execute(queryCommand); // async call
+										queryResponse = queryCmdRunner.execute(queryCommand); // async
+																								// call
 										System.out.println("Finished executing query: " + queryName);
 										System.out.println("Processing query: " + queryName + " results");
-									
-										String productConfig = ""; // from System Element
-										String simulationName = ""; // from Function Element
+
+										// from System Element
+										String productConfig = "";
+										// from Function Element
+										String simulationName = "";
 										String strType = "";
 										String strName = "";
-										HashMap<String,String> requiresRelationHashMap = new HashMap<String, String>();												
-										workItemIterator = queryResponse.getWorkItems();										
+										HashMap<String, String> requiresRelationHashMap = new HashMap<String, String>();
+										workItemIterator = queryResponse.getWorkItems();
 										while (workItemIterator.hasNext()) {
 											workItem = workItemIterator.next();
-											System.out.println("Reading fields from query result #" + idx + " " + workItem);
+											System.out.println(
+													"Reading fields from query result #" + idx + " " + workItem);
 
 											// another way to access the field
-											// Field idField = workItem.getField("id");
+											// Field idField =
+											// workItem.getField("id");
 											// System.out.println(idField.toString());
 											fieldsIterator = workItem.getFields();
 											while (fieldsIterator.hasNext()) {
@@ -280,28 +315,34 @@ public class TestRequirementToSimulink2 {
 												if (fieldObject instanceof Field) {
 													field = (Field) fieldObject;
 													System.out.println("Field name = " + field.getName());
-													System.out.println("Field display name = " + field.getDisplayName());
+													System.out
+															.println("Field display name = " + field.getDisplayName());
 													if (field.getName().equals("Category")) {
 														System.out.println("Reading Category field");
 														fieldValue = field.getValue();
 														strType = (String) fieldValue;
-														if(strType!=null){									
-														} else { strType = "null";}
+														if (strType != null) {
+														} else {
+															strType = "null";
+														}
 														System.out.println("Category field = " + strType);
-														System.out.println("");														
+														System.out.println("");
 													} else if (field.getName().equals("Name")) {
 														System.out.println("Reading Name field");
 														fieldValue = field.getValue();
 														strName = (String) fieldValue;
-														if(strName!=null){									
-														} else { strName = "null";}
+														if (strName != null) {
+														} else {
+															strName = "null";
+														}
 														System.out.println("Name field = " + strName);
-														System.out.println("");																											}
+														System.out.println("");
+													}
 												}
 											}
 											requiresRelationHashMap.put(strType, strName);
 										}
-										productConfig = requiresRelationHashMap.get("System Element");										
+										productConfig = requiresRelationHashMap.get("System Element");
 										simulationName = requiresRelationHashMap.get("Function");
 										System.out.println("Product Configuration = " + productConfig);
 										System.out.println("Simulation Name = " + simulationName);
@@ -309,30 +350,28 @@ public class TestRequirementToSimulink2 {
 									} catch (APIException e1) {
 										System.err.println(e1.getMessage());
 										System.err.println("");
-										
+
 									}
-									
+
 								}
-								
+
 							}
 						}
 					}
 
 				}
 				System.out.println(queryResponse.getWorkItems().next().getFields().next().toString());
-				System.out.println("End Integrity API call");				
+				System.out.println("End Integrity API call");
 				integrationPointFactory.removeIntegrationPoint(integrationPoint);
 				System.out.println("Removing integration point to terminate thread.");
-				
-			} 
-			catch(ItemNotFoundException e){
+
+			} catch (ItemNotFoundException e) {
 				System.err.println(e.toString());
 			}
-		} 
-		catch(Exception e){
+		} catch (Exception e) {
 			System.err.println(e.getMessage());
 			System.err.println("");
-			
+
 		}
 		return;
 	}
