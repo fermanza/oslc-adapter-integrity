@@ -104,7 +104,8 @@ public class TestRequirementToSimulink2 {
 				// TODO: note that this is a custom hard coded value.
 				int reqId = 243828;
 				// the static block in OSLC4JIn... class calls APIs
-				queryList.add("hostname", OSLC4JIntegrityApplication.integrityHostName);
+				// queryList.add("hostname", OSLC4JIntegrityApplication.integrityHostName);
+				queryList.add("hostname", "lsdewcs9.sdde.xxxxx.com");
 				queryList.add("queryDefinition", "((field[ID]=" + reqId + "))");
 				queryList.add("fields", queryFields);
 				queryCommand.setOptionList(queryList);
@@ -123,7 +124,7 @@ public class TestRequirementToSimulink2 {
 				queryCommand = new Command(Command.IM, "issues");
 				queryList = new OptionList();
 				// the static block in OSLC4JIn... class calls APIs
-				queryList.add("hostname", OSLC4JIntegrityApplication.integrityHostName);
+				queryList.add("hostname", "lsdewcs9.sdde.xxxxx.com");
 				queryList.add("query", queryName);
 				queryList.add("fields", queryFields);
 				queryCommand.setOptionList(queryList);
@@ -292,7 +293,7 @@ public class TestRequirementToSimulink2 {
 										System.out.println("Editing quick query and running");
 										queryName = "Quick Query";
 										queryFields = "Category,Name";
-										queryList.add("hostname", OSLC4JIntegrityApplication.integrityHostName);
+										queryList.add("hostname", "lsdewcs9.sdde.xxxxx.com");
 										queryList.add("queryDefinition", "((field[ID]=" + requiresRelationshipIDs.get(0)
 												+ ")or(field[ID]=" + requiresRelationshipIDs.get(1) + "))");
 										queryList.add("fields", queryFields);
@@ -313,7 +314,11 @@ public class TestRequirementToSimulink2 {
 										// issues view information
 										queryCommand = new Command(Command.IM, "issues");
 										queryList = new OptionList();
-										queryList.add("hostname", OSLC4JIntegrityApplication.integrityHostName);
+										// reading in config properties file does not work with exported jar. reference: 
+										// http://stackoverflow.com/questions/18091046/creating-runnable-jar-with-external-files-included
+										// http://stackoverflow.com/questions/7284471/where-does-java-put-resource-files-when-i-jar-my-program/7284648#7284648
+										//queryList.add("hostname", OSLC4JIntegrityApplication.integrityHostName);
+										queryList.add("hostname", "lsdewcs9.sdde.xxxxx.com"); 										
 										queryList.add("query", queryName);
 										queryList.add("fields", queryFields);
 										queryCommand.setOptionList(queryList);
@@ -474,7 +479,7 @@ public class TestRequirementToSimulink2 {
 			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
 			DOMSource source = new DOMSource(doc);
-			StreamResult result = new StreamResult(new File("C:/MTIC_Data/Requirements_Integration/file.xml"));
+			StreamResult result = new StreamResult(new File("ID_" + xmlStringID + ".xml"));
 
 			// Output to console for testing
 			// StreamResult result = new StreamResult(System.out);
@@ -486,7 +491,6 @@ public class TestRequirementToSimulink2 {
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 			System.err.println("");
-
 		}
 		return;
 	}
