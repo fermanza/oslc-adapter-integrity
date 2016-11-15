@@ -1,12 +1,19 @@
 package edu.gatech.mbsec.adapter.integrity.application;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
 import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Properties;
 import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -48,6 +55,14 @@ public class TestRequirementToSimulink2 {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
+		try {
+			System.out.println("Current directory");
+			System.out.println(new File(".").getCanonicalPath());
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
 		Thread thread = new Thread() {
 			public void start() {
 				readIntegrityData();
@@ -67,6 +82,11 @@ public class TestRequirementToSimulink2 {
 		System.out.println("Main function finished.");
 	}
 
+	private static String readFile(String path, Charset encoding) throws IOException {
+		byte[] encoded = Files.readAllBytes(Paths.get(path));
+		return encoding.decode(ByteBuffer.wrap(encoded)).toString();
+	}
+	
 	public static synchronized void readIntegrityData() {
 
 		System.out.println("Inside Thread");
@@ -74,11 +94,35 @@ public class TestRequirementToSimulink2 {
 		IntegrationPointFactory integrationPointFactory = IntegrationPointFactory.getInstance();
 		IntegrationPoint integrationPoint;
 		Session session = null;
+		String localConfigFilePath = "oslc4jintegrity configuration\\config.properties";
+		String fullConfigFilePath = "";
+		// String hostname = OSLC4JIntegrityApplication.integrityHostName;
+		// String username = OSLC4JIntegrityApplication.integrityUsername;
+		// String password = OSLC4JIntegrityApplication.integrityPassword;
+
+		// directly read in user info.
+		String hostname = "lsdewcs9.sdde.xxxxx.com";
+		String username = "xxxxxxx";
+		String password = "xxxxxxxxx";
+		try {
+			fullConfigFilePath = (new File(".").getCanonicalPath()) + "\\" + localConfigFilePath;
+			System.out.println("Location of config file: " + fullConfigFilePath);
+			String str = readFile(fullConfigFilePath, Charset.defaultCharset());
+			Properties prop = new Properties();
+			prop.load(new StringReader(str.replace("\\", "/")));			
+			hostname = prop.getProperty("integrityHostName");
+			username = prop.getProperty("integrityUsername");
+			password = prop.getProperty("integrityPassword");	
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+
 		try {
 			integrationPoint = integrationPointFactory.createLocalIntegrationPoint(4, 16);
-
-			session = integrationPoint.getCommonSession();
-
+			integrationPoint.setAutoStartIntegrityClient(true);
+			// the static block in OSLC4JIntegrityApplication class calls APIs
+			session = integrationPoint.getCommonSession(username, password);
 			CmdRunner queryCmdRunner;
 			Response queryResponse = null;
 
@@ -103,16 +147,13 @@ public class TestRequirementToSimulink2 {
 				String queryFields = "Project,ID,Type,Name,Category,Text,Parameter Values,Requires";
 				// TODO: note that this is a custom hard coded value.
 				int reqId = 243828;
-				// the static block in OSLC4JIn... class calls APIs
-				// queryList.add("hostname", OSLC4JIntegrityApplication.integrityHostName);
-				queryList.add("hostname", "lsdewcs9.sdde.xxxxx.com");
+				queryList.add("hostname", hostname);
 				queryList.add("queryDefinition", "((field[ID]=" + reqId + "))");
 				queryList.add("fields", queryFields);
 				queryCommand.setOptionList(queryList);
 				queryCommand.addSelection(queryName);
 				System.out.println("Running edit query: " + queryName);
-				queryResponse = queryCmdRunner.execute(queryCommand); // async
-																		// call
+				queryResponse = queryCmdRunner.execute(queryCommand);
 				System.out.println("Finished editing query: " + queryName);
 
 				System.out.println("Running query: " + queryName + " results");
@@ -124,7 +165,7 @@ public class TestRequirementToSimulink2 {
 				queryCommand = new Command(Command.IM, "issues");
 				queryList = new OptionList();
 				// the static block in OSLC4JIn... class calls APIs
-				queryList.add("hostname", "lsdewcs9.sdde.xxxxx.com");
+				queryList.add("hostname", hostname);
 				queryList.add("query", queryName);
 				queryList.add("fields", queryFields);
 				queryCommand.setOptionList(queryList);
@@ -293,7 +334,7 @@ public class TestRequirementToSimulink2 {
 										System.out.println("Editing quick query and running");
 										queryName = "Quick Query";
 										queryFields = "Category,Name";
-										queryList.add("hostname", "lsdewcs9.sdde.xxxxx.com");
+										queryList.add("hostname", hostname);
 										queryList.add("queryDefinition", "((field[ID]=" + requiresRelationshipIDs.get(0)
 												+ ")or(field[ID]=" + requiresRelationshipIDs.get(1) + "))");
 										queryList.add("fields", queryFields);
@@ -314,11 +355,12 @@ public class TestRequirementToSimulink2 {
 										// issues view information
 										queryCommand = new Command(Command.IM, "issues");
 										queryList = new OptionList();
-										// reading in config properties file does not work with exported jar. reference: 
+										// reading in config properties file
+										// does not work with exported jar.
+										// reference:
 										// http://stackoverflow.com/questions/18091046/creating-runnable-jar-with-external-files-included
 										// http://stackoverflow.com/questions/7284471/where-does-java-put-resource-files-when-i-jar-my-program/7284648#7284648
-										//queryList.add("hostname", OSLC4JIntegrityApplication.integrityHostName);
-										queryList.add("hostname", "lsdewcs9.sdde.xxxxx.com"); 										
+										queryList.add("hostname", hostname);
 										queryList.add("query", queryName);
 										queryList.add("fields", queryFields);
 										queryCommand.setOptionList(queryList);
@@ -397,7 +439,6 @@ public class TestRequirementToSimulink2 {
 							}
 						}
 					}
-
 				}
 				System.out.println(queryResponse.getWorkItems().next().getFields().next().toString());
 				System.out.println("End Integrity API call");
