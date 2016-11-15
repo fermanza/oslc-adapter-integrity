@@ -40,8 +40,12 @@
 			<artifactId>ecore-integrity</artifactId>
 			<version>1.1.0</version>
 		</dependency>
-
-
+ 		
+		<dependency>
+			<groupId>myIntegrityEMFProject</groupId>
+			<artifactId>ecore-integrity-exec-requirement</artifactId>
+			<version>0.0.1</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.eclipse.lyo.oslc4j.core</groupId>

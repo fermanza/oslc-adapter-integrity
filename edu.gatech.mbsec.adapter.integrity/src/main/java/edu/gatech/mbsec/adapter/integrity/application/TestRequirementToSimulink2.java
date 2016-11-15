@@ -1,6 +1,7 @@
 package edu.gatech.mbsec.adapter.integrity.application;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
@@ -47,6 +48,12 @@ import edu.gatech.mbsec.adapter.integrity.application.OSLC4JIntegrityApplication
 import edu.gatech.mbsec.adapter.integrity.application.util.IntegrityUtil;
 import edu.gatech.mbsec.adapter.integrity.generated.resources.IntegrityRequirement;
 import edu.gatech.mbsec.adapter.integrity.generated.resources.IntegrityServerResources;
+import integrityNew.IntegrityNewFactory;
+import integrityNew.ParameterValues;
+import integrityNew.ProductConfiguration;
+import integrityNew.Project;
+import integrityNew.Requirement;
+import integrityNew.SimulationName;
 
 public class TestRequirementToSimulink2 {
 
@@ -449,7 +456,9 @@ public class TestRequirementToSimulink2 {
 				System.err.println(e.toString());
 			}
 
-			// Create output XML file
+			//================================================================
+			// create output XML file
+			//================================================================
 			System.out.println("\n\n");
 			System.out.println("Output XML file section");
 			System.out.println(xmlStringProject);
@@ -529,6 +538,45 @@ public class TestRequirementToSimulink2 {
 
 			System.out.println("File saved!");
 
+			//================================================================
+			// create ecore object 
+			//================================================================
+			System.out.println("Creating Ecore model");
+			Project ecoreProject = IntegrityNewFactory.eINSTANCE.createProject();
+			ecoreProject.setId("1");
+			ecoreProject.setName(xmlStringProject);
+			Requirement ecoreRequirement = IntegrityNewFactory.eINSTANCE.createRequirement();
+			ecoreProject.getRequirements().add(ecoreRequirement);
+
+			ecoreRequirement.setId(xmlStringID);
+			ecoreRequirement.setName(xmlStringName);
+			ecoreRequirement.setText(xmlStringText);		
+			
+			ParameterValues ecoreParamValue = IntegrityNewFactory.eINSTANCE.createParameterValues();
+			ecoreParamValue.setLowerLimit(xmlParameterValuesMap.get("lowerLimit"));
+			ecoreParamValue.setUpperLimit(xmlParameterValuesMap.get("upperLimit"));
+			ecoreParamValue.setUnit(xmlParameterValuesMap.get("unit"));
+			ecoreRequirement.setParameterValues(ecoreParamValue);
+			
+			ProductConfiguration ecoreProdConfig = IntegrityNewFactory.eINSTANCE.createProductConfiguration();
+			ecoreProdConfig.setName(xmlStringProductConfiguration);
+			ecoreRequirement.setProductConfiguration(ecoreProdConfig);
+			
+			SimulationName ecoreSimName = IntegrityNewFactory.eINSTANCE.createSimulationName();
+			ecoreSimName.setName(xmlStringSimulationName);			
+			ecoreRequirement.setSimulationName(ecoreSimName);
+			
+			System.out.println("adding content to ecore objects");
+			
+			//================================================================
+			// convert ecore object to xml
+			//================================================================
+			/* does not work currently
+			JAXBContext contextObj = JAXBContext.newInstance(Project.class);						
+			Marshaller marshallerObj = contextObj.createMarshaller();
+			marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			marshallerObj.marshal(xmlStringCategory, new FileOutputStream("ecore_ID_" + xmlStringID + ".xml"));			
+			*/
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 			System.err.println("");
