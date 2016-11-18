@@ -1,9 +1,13 @@
 package edu.gatech.mbsec.adapter.integrity.application;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.StringReader;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -14,9 +18,11 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
 
+import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -25,9 +31,13 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.lyo.oslc4j.core.exception.OslcCoreApplicationException;
+import org.eclipse.lyo.oslc4j.provider.jena.ErrorHandler;
+import org.eclipse.lyo.oslc4j.provider.jena.JenaModelHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.hp.hpl.jena.rdf.model.RDFWriter;
 import com.mks.api.CmdRunner;
 import com.mks.api.Command;
 import com.mks.api.IntegrationPoint;
@@ -46,14 +56,17 @@ import com.mks.api.response.WorkItemIterator;
 
 import edu.gatech.mbsec.adapter.integrity.application.OSLC4JIntegrityApplication;
 import edu.gatech.mbsec.adapter.integrity.application.util.IntegrityUtil;
-import edu.gatech.mbsec.adapter.integrity.generated.resources.IntegrityRequirement;
-import edu.gatech.mbsec.adapter.integrity.generated.resources.IntegrityServerResources;
 import integrityNew.IntegrityNewFactory;
 import integrityNew.ParameterValues;
 import integrityNew.ProductConfiguration;
 import integrityNew.Project;
 import integrityNew.Requirement;
 import integrityNew.SimulationName;
+import resources.IntegrityParameterValues;
+import resources.IntegrityProductConfiguration;
+import resources.IntegrityProject;
+import resources.IntegrityRequirement;
+import resources.IntegritySimulationName;
 
 public class TestRequirementToSimulink2 {
 
@@ -134,6 +147,7 @@ public class TestRequirementToSimulink2 {
 			Response queryResponse = null;
 
 			// variables used to populate output xml file
+			String xmlStringProjectID = "1"; // hardcoded for now
 			String xmlStringProject = "";
 			String xmlStringCategory = "";
 			String xmlStringID = "";
@@ -543,7 +557,7 @@ public class TestRequirementToSimulink2 {
 			//================================================================
 			System.out.println("Creating Ecore model");
 			Project ecoreProject = IntegrityNewFactory.eINSTANCE.createProject();
-			ecoreProject.setId("1");
+			ecoreProject.setId(xmlStringProjectID);
 			ecoreProject.setName(xmlStringProject);
 			Requirement ecoreRequirement = IntegrityNewFactory.eINSTANCE.createRequirement();
 			ecoreProject.getRequirements().add(ecoreRequirement);
@@ -569,13 +583,133 @@ public class TestRequirementToSimulink2 {
 			System.out.println("adding content to ecore objects");
 			
 			//================================================================
+			// create rdf-compatible object (using Java classes generated from
+			// ecore model with OSLC annotations
+			//================================================================
+			String URIprefix = "http://IntegrityExecutableRequirements/";
+			
+			IntegrityProject rdfProject = new IntegrityProject();
+			IntegrityRequirement rdfRequirement = new IntegrityRequirement();
+			IntegrityParameterValues rdfParamValue = new IntegrityParameterValues();
+			IntegrityProductConfiguration rdfProdConfig = new IntegrityProductConfiguration();
+			IntegritySimulationName rdfSimName = new IntegritySimulationName();
+			
+			rdfProject.setAbout(URI.create(URIprefix + "projectID" + xmlStringProjectID));
+			rdfProject.setId(xmlStringProjectID);
+			rdfProject.setName(xmlStringProject);
+			// Need to figure out how to assign other objects to this using
+			// Link[] object
+			// rdfProject.setRequirements(null); 
+			
+			rdfRequirement.setId(xmlStringID);
+			rdfRequirement.setName(xmlStringName);
+			rdfRequirement.setText(xmlStringText);
+			rdfRequirement.setAbout(URI.create(URIprefix + "requirementID" + xmlStringID));
+			// rdfRequirement.setParameterValues(parameterValues);
+			// rdfRequirement.setProductConfiguration(productConfiguration);
+			// rdfRequirement.setSimulationName(simulationName);
+
+			rdfParamValue.setLowerLimit(xmlParameterValuesMap.get("lowerLimit"));
+			rdfParamValue.setUpperLimit(xmlParameterValuesMap.get("upperLimit"));
+			rdfParamValue.setUnit(xmlParameterValuesMap.get("unit"));
+			rdfParamValue.setAbout(URI.create(URIprefix + "paramValueForRequirementID" + xmlStringID));
+			
+			rdfProdConfig.setName(xmlStringProductConfiguration);
+			rdfProdConfig.setAbout(URI.create(URIprefix + "productConfigForRequirementID" + xmlStringID));
+			
+			rdfSimName.setName(xmlStringSimulationName);
+			rdfSimName.setAbout(URI.create(URIprefix + "simulationNameForRequirementID" + xmlStringID));
+			
+			System.out.println("finished creating RDF compatible object");
+
+			//================================================================
+			// write to rdf file 
+			//================================================================
+			System.out.println("Starting to write RDF output file");
+			ArrayList<Object> objectList = new ArrayList<Object>();
+			objectList.add(rdfProject);
+			objectList.add(rdfRequirement);
+			objectList.add(rdfParamValue);
+			objectList.add(rdfProdConfig);
+			objectList.add(rdfSimName);
+			
+			int arraySize = objectList.size();
+
+			Object[] objects = new Object[arraySize];
+			objects = objectList.toArray();
+
+			try {
+				com.hp.hpl.jena.rdf.model.Model model = JenaModelHelper.createJenaModel(objects);
+				RDFWriter writer = model.getWriter("RDF/XML");
+				writer.setProperty("showXmlDeclaration", "false");
+				writer.setErrorHandler(new ErrorHandler());
+				String rdfFileName = "rdfForRequirementID_" + xmlStringID + ".xml";
+				File newFile = new File(rdfFileName);
+				newFile.createNewFile();
+				OutputStream outputStream = new FileOutputStream(rdfFileName);
+				writer.write(model, outputStream, null);
+				System.out.println("Finished writing RDF file");
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
+					| DatatypeConfigurationException | OslcCoreApplicationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+			//================================================================
 			// convert ecore object to xml
 			//================================================================
 			/* does not work currently
 			JAXBContext contextObj = JAXBContext.newInstance(Project.class);						
 			Marshaller marshallerObj = contextObj.createMarshaller();
 			marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			marshallerObj.marshal(xmlStringCategory, new FileOutputStream("ecore_ID_" + xmlStringID + ".xml"));			
+			marshallerObj.marshal(xmlStringCategory, new FileOutputStream("ecore_ID_" + xmlStringID + ".xml"));	
+
+		
+			
+			static Map<String, SysMLBlock> qNameOslcSysmlBlockMap = new HashMap<String, SysMLBlock>();
+
+			SysMLBlock sysMLBlock;
+			sysMLBlock = new SysMLBlock();
+			qNameOslcSysmlBlockMap.put(
+					magicDrawFileName + "/blocks/" + qName.replaceAll("\\n", "-").replaceAll(" ", "_"), sysMLBlock);
+						
+			ArrayList<Object> objectList = new ArrayList<Object>();
+			objectList.addAll(qNameOslcSysmlBlockMap.values());
+			int arraySize = qNameOslcSysmlBlockMap.size() ;
+			Object[] objects = new Object[arraySize];		
+			objects = objectList.toArray();
+			try {				
+				com.hp.hpl.jena.rdf.model.Model model = JenaModelHelper.createJenaModel(objects);
+				RDFWriter writer = model.getWriter("RDF/XML");
+				writer.setProperty("showXmlDeclaration",
+						"false");
+				writer.setErrorHandler(new ErrorHandler());
+				File newFile = new File("rdf_output.xml");
+				newFile.createNewFile();
+
+				OutputStream outputStream = new FileOutputStream("rdf_output.xml");	      	       	        
+				writer.write(model,
+						outputStream,
+						null);
+			} catch (IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException | DatatypeConfigurationException
+					| OslcCoreApplicationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			*/
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
