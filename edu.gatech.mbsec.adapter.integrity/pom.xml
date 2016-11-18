@@ -34,16 +34,24 @@
 			<artifactId>jsr311-api</artifactId>
 			<version>1.1.1</version>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>edu.gatech.mbsec.adapter.integrity</groupId>
 			<artifactId>ecore-integrity</artifactId>
 			<version>1.1.0</version>
 		</dependency>
- 		
+
+		<!-- New Ecore Model -->
 		<dependency>
 			<groupId>myIntegrityEMFProject</groupId>
 			<artifactId>ecore-integrity-exec-requirement</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+
+		<!-- New Rdf Model -->
+		<dependency>
+			<groupId>myIntegrityEMF.resources</groupId>
+			<artifactId>rdf-integrity-exec-requirement</artifactId>
 			<version>0.0.1</version>
 		</dependency>
 
@@ -162,25 +170,10 @@
 	<build>
 		<plugins>
 
-	<!-- 
-	<plugin>
-		<groupId>org.apache.maven.plugins</groupId>
-		<artifactId>maven-jar-plugin</artifactId>
-		<version>3.0.2</version>
-		<executions>
-			<execution>
-				<id>make-a-jar</id>
-				<phase>package</phase>
-				<goals>
-					<goal>jar</goal>
-				</goals>
-				<configuration>
-					<classifier>client</classifier>
-				</configuration>
-			</execution>
-		</executions>
-	</plugin> 
-	-->
+			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-jar-plugin</artifactId> 
+				<version>3.0.2</version> <executions> <execution> <id>make-a-jar</id> <phase>package</phase> 
+				<goals> <goal>jar</goal> </goals> <configuration> <classifier>client</classifier> 
+				</configuration> </execution> </executions> </plugin> -->
 
 
 
