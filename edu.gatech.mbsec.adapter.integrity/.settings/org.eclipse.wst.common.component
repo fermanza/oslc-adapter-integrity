@@ -6,6 +6,12 @@
         <dependent-module archiveName="ecore-integrity-1.1.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/edu.gatech.mbsec.adapter.integrity.ecore/edu.gatech.mbsec.adapter.integrity.ecore">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="ecore-integrity-exec-requirement-0.0.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/myIntegrityEMFProject/myIntegrityEMFProject">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="rdf-integrity-exec-requirement-0.0.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/myIntegrityEMF.resources/myIntegrityEMF.resources">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <dependent-module archiveName="oslc4j-wink-3.0.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/org.eclipse.lyo.oslc4j.wink/org.eclipse.lyo.oslc4j.wink">
             <dependency-type>uses</dependency-type>
         </dependent-module>
