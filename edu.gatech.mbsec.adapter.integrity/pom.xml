@@ -13,8 +13,11 @@
 
 	<dependencies>
 
-
-
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.5</version>
+		</dependency>
 
 		<dependency>
 			<groupId>javax.servlet.jsp</groupId>
@@ -34,7 +37,7 @@
 			<artifactId>jsr311-api</artifactId>
 			<version>1.1.1</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>edu.gatech.mbsec.adapter.integrity</groupId>
 			<artifactId>ecore-integrity</artifactId>
@@ -102,20 +105,24 @@
 			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/mksapi.jar</systemPath>
 		</dependency>
 
+
 		<dependency>
+			<!-- version 1.1.2 uses the com.hp.hpl.jena package. -->
+			<!-- version 3.1.0 uses the org.apache.jena package. However, the OSLC4J 
+				libraries for Jena also need to be updated to use this new path. -->
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-tdb</artifactId>
-			<version>1.1.2</version>	<!-- depend on jena-tdb, which will pull in the other artifacts, version 
-				number of TDB needs to be checked - it is not the same as apache-jena, https://jena.apache.org/download/maven.html -->
+			<version>1.1.2</version>
 		</dependency>
 
 		<dependency>
+			<!-- version 2.13 uses the com.hp.hpl.jena package. -->
+			<!-- version 3.1.0 uses the org.apache.jena package. However, the OSLC4J 
+				libraries for Jena also need to be updated to use this new path. -->
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-core</artifactId>
 			<version>2.13.0</version>
 		</dependency>
-
-
 
 		<dependency>
 			<groupId>junit</groupId>
