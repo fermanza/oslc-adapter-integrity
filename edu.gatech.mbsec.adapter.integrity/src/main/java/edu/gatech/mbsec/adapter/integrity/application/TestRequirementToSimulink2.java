@@ -31,13 +31,18 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.lyo.oslc4j.core.exception.OslcCoreApplicationException;
+import org.eclipse.lyo.oslc4j.core.model.Link;
 import org.eclipse.lyo.oslc4j.provider.jena.ErrorHandler;
 import org.eclipse.lyo.oslc4j.provider.jena.JenaModelHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.hp.hpl.jena.query.Dataset;
+import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.RDFWriter;
+import com.hp.hpl.jena.tdb.TDBFactory;
 import com.mks.api.CmdRunner;
 import com.mks.api.Command;
 import com.mks.api.IntegrationPoint;
@@ -586,7 +591,7 @@ public class TestRequirementToSimulink2 {
 			// create rdf-compatible object (using Java classes generated from
 			// ecore model with OSLC annotations
 			//================================================================
-			String URIprefix = "http://IntegrityExecutableRequirements/";
+			String URIprefix = "http://IntegrityExecutableRequirements/#";
 			
 			IntegrityProject rdfProject = new IntegrityProject();
 			IntegrityRequirement rdfRequirement = new IntegrityRequirement();
@@ -597,29 +602,31 @@ public class TestRequirementToSimulink2 {
 			rdfProject.setAbout(URI.create(URIprefix + "projectID" + xmlStringProjectID));
 			rdfProject.setId(xmlStringProjectID);
 			rdfProject.setName(xmlStringProject);
-			// Need to figure out how to assign other objects to this using
-			// Link[] object
-			// rdfProject.setRequirements(null); 
 			
 			rdfRequirement.setId(xmlStringID);
 			rdfRequirement.setName(xmlStringName);
 			rdfRequirement.setText(xmlStringText);
 			rdfRequirement.setAbout(URI.create(URIprefix + "requirementID" + xmlStringID));
-			// rdfRequirement.setParameterValues(parameterValues);
-			// rdfRequirement.setProductConfiguration(productConfiguration);
-			// rdfRequirement.setSimulationName(simulationName);
 
 			rdfParamValue.setLowerLimit(xmlParameterValuesMap.get("lowerLimit"));
 			rdfParamValue.setUpperLimit(xmlParameterValuesMap.get("upperLimit"));
 			rdfParamValue.setUnit(xmlParameterValuesMap.get("unit"));
-			rdfParamValue.setAbout(URI.create(URIprefix + "paramValueForRequirementID" + xmlStringID));
+			rdfParamValue.setAbout(URI.create(URIprefix + "paramValueForRequirementID" + xmlStringID));			
+			rdfRequirement.setParameterValues(rdfParamValue.getAbout());
 			
 			rdfProdConfig.setName(xmlStringProductConfiguration);
 			rdfProdConfig.setAbout(URI.create(URIprefix + "productConfigForRequirementID" + xmlStringID));
+			rdfRequirement.setProductConfiguration(rdfProdConfig.getAbout());
 			
 			rdfSimName.setName(xmlStringSimulationName);
 			rdfSimName.setAbout(URI.create(URIprefix + "simulationNameForRequirementID" + xmlStringID));
-			
+			rdfRequirement.setSimulationName(rdfSimName.getAbout());
+
+			// important to assign relationships AFTER the URIs are created on the child objects
+			Link[] linkReq2Project = new Link[1]; 
+			linkReq2Project[0] = new Link(rdfRequirement.getAbout());
+			rdfProject.setRequirements(linkReq2Project);
+
 			System.out.println("finished creating RDF compatible object");
 
 			//================================================================
@@ -634,13 +641,13 @@ public class TestRequirementToSimulink2 {
 			objectList.add(rdfSimName);
 			
 			int arraySize = objectList.size();
-
 			Object[] objects = new Object[arraySize];
 			objects = objectList.toArray();
 
 			try {
-				com.hp.hpl.jena.rdf.model.Model model = JenaModelHelper.createJenaModel(objects);
-				RDFWriter writer = model.getWriter("RDF/XML");
+				Model model = JenaModelHelper.createJenaModel(objects);
+				String rdfFormat = "RDF/XML"; // "RDF/XML", "RDF/XML-ABBREV", "N-TRIPLES"
+				RDFWriter writer = model.getWriter(rdfFormat); 
 				writer.setProperty("showXmlDeclaration", "false");
 				writer.setErrorHandler(new ErrorHandler());
 				String rdfFileName = "rdfForRequirementID_" + xmlStringID + ".xml";
@@ -648,6 +655,7 @@ public class TestRequirementToSimulink2 {
 				newFile.createNewFile();
 				OutputStream outputStream = new FileOutputStream(rdfFileName);
 				writer.write(model, outputStream, null);
+				outputStream.close();
 				System.out.println("Finished writing RDF file");
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
 					| DatatypeConfigurationException | OslcCoreApplicationException e) {
@@ -660,59 +668,41 @@ public class TestRequirementToSimulink2 {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			
+
 			//================================================================
-			// convert ecore object to xml
+			// write to triple store database in folder 
 			//================================================================
-			/* does not work currently
-			JAXBContext contextObj = JAXBContext.newInstance(Project.class);						
-			Marshaller marshallerObj = contextObj.createMarshaller();
-			marshallerObj.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			marshallerObj.marshal(xmlStringCategory, new FileOutputStream("ecore_ID_" + xmlStringID + ".xml"));	
-
-		
-			
-			static Map<String, SysMLBlock> qNameOslcSysmlBlockMap = new HashMap<String, SysMLBlock>();
-
-			SysMLBlock sysMLBlock;
-			sysMLBlock = new SysMLBlock();
-			qNameOslcSysmlBlockMap.put(
-					magicDrawFileName + "/blocks/" + qName.replaceAll("\\n", "-").replaceAll(" ", "_"), sysMLBlock);
-						
-			ArrayList<Object> objectList = new ArrayList<Object>();
-			objectList.addAll(qNameOslcSysmlBlockMap.values());
-			int arraySize = qNameOslcSysmlBlockMap.size() ;
-			Object[] objects = new Object[arraySize];		
-			objects = objectList.toArray();
-			try {				
-				com.hp.hpl.jena.rdf.model.Model model = JenaModelHelper.createJenaModel(objects);
-				RDFWriter writer = model.getWriter("RDF/XML");
-				writer.setProperty("showXmlDeclaration",
-						"false");
-				writer.setErrorHandler(new ErrorHandler());
-				File newFile = new File("rdf_output.xml");
-				newFile.createNewFile();
-
-				OutputStream outputStream = new FileOutputStream("rdf_output.xml");	      	       	        
-				writer.write(model,
-						outputStream,
-						null);
-			} catch (IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException | DatatypeConfigurationException
-					| OslcCoreApplicationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			try {
+				System.out.println("Starting to write TDB output");
+				String tdbdir = "./TDBoutput";
+				File tdbdirFile = new File(tdbdir);
+				if (tdbdirFile.exists()) {
+					FileUtils.forceDelete(tdbdirFile);
+				}
+				if (!tdbdirFile.exists()) {
+					Files.createDirectories(Paths.get(tdbdir));
+				}
+				Model model = JenaModelHelper.createJenaModel(objects);
+				Dataset dataset = TDBFactory.createDataset(tdbdir);
+				Model tdbModel = dataset.getDefaultModel();
+//				System.out.println(tdbModel.
+				// read in existing model from TDB directory
+				tdbModel.add(model);
+				dataset.close();
+				System.out.println("Finished writing TDB output");
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
+					| DatatypeConfigurationException | OslcCoreApplicationException e) {
+				System.err.println(e.getMessage());
+				System.err.println("");
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.err.println(e.getMessage());
+				System.err.println("");
+			} catch (Exception e) {
+				System.err.println(e.getMessage());
+				System.err.println("");				
 			}
-			*/
 		} catch (Exception e) {
-			System.err.println(e.getMessage());
+			System.err.println(e.toString());
 			System.err.println("");
 		}
 		return;
