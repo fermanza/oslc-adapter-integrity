@@ -73,6 +73,16 @@ import resources.IntegrityProject;
 import resources.IntegrityRequirement;
 import resources.IntegritySimulationName;
 
+/**
+ * This class reads in data from Integrity and outputs it to RDF and TDB form. Specifically, it: 
+ * <ul>
+ * <li> reads in a specific requirement from Integrity
+ * <li> processes it and extracts information
+ * <li> creates a simple output xml file that can be used by Matlab
+ * <li> creates a plain old java object (POJO) that is defined by an ecore metamodel. The generated code for the ecore metamodel includes the annotations required to support RDF serialization.
+ * <li> serializes the POJO to an RDF output xml file and a TDB database.
+ * </ul>
+ */
 public class TestRequirementToSimulink2 {
 
 	public static SynchronizedBooleanFlag serverResourcesReadFlag = new SynchronizedBooleanFlag();
