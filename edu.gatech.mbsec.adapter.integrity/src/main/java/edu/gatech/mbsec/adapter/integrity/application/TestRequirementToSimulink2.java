@@ -695,7 +695,8 @@ public class TestRequirementToSimulink2 {
 				RDFWriter writer = model.getWriter(rdfFormat);
 				writer.setProperty("showXmlDeclaration", "false");
 				writer.setErrorHandler(new ErrorHandler());
-				String rdfFileName = "rdfForRequirementID_" + xmlStringID + ".xml";
+				// not setting extension to xml because that confuses the Matlab script that is looking for xml files to read in. 
+				String rdfFileName = "rdfForRequirementID_" + xmlStringID + ".rdf";
 				File newFile = new File(rdfFileName);
 				newFile.createNewFile();
 				OutputStream outputStream = new FileOutputStream(rdfFileName);
