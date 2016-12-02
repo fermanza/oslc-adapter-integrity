@@ -139,6 +139,7 @@ public class TestRequirementToSimulink2 {
 		String hostname = "lsdewcs9.sdde.xxxxx.com";
 		String username = "xxxxxxx";
 		String password = "xxxxxxxxx";
+		/* Read in from config.properties file
 		try {
 			fullConfigFilePath = (new File(".").getCanonicalPath()) + "\\" + localConfigFilePath;
 			System.out.println("Location of config file: " + fullConfigFilePath);
@@ -152,7 +153,15 @@ public class TestRequirementToSimulink2 {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
+		*/
 
+		// read in from environment variable that is present during Jenkins job
+		// execution (uses credentials binding plugin). Ref:
+		// https://support.cloudbees.com/hc/en-us/articles/203802500-Injecting-Secrets-into-Jenkins-Build-Jobs
+		hostname = System.getenv("integrityHostName");
+		username = System.getenv("integrityUsername");
+		password = System.getenv("integrityPassword");			
+		
 		try {
 			integrationPoint = integrationPointFactory.createLocalIntegrationPoint(4, 16);
 			integrationPoint.setAutoStartIntegrityClient(true);
