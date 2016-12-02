@@ -74,13 +74,16 @@ import resources.IntegrityRequirement;
 import resources.IntegritySimulationName;
 
 /**
- * This class reads in data from Integrity and outputs it to RDF and TDB form. Specifically, it: 
+ * This class reads in data from Integrity and outputs it to RDF and TDB form.
+ * Specifically, it:
  * <ul>
- * <li> reads in a specific requirement from Integrity
- * <li> processes it and extracts information
- * <li> creates a simple output xml file that can be used by Matlab
- * <li> creates a plain old java object (POJO) that is defined by an ecore metamodel. The generated code for the ecore metamodel includes the annotations required to support RDF serialization.
- * <li> serializes the POJO to an RDF output xml file and a TDB database.
+ * <li>reads in a specific requirement from Integrity
+ * <li>processes it and extracts information
+ * <li>creates a simple output xml file that can be used by Matlab
+ * <li>creates a plain old java object (POJO) that is defined by an ecore
+ * metamodel. The generated code for the ecore metamodel includes the
+ * annotations required to support RDF serialization.
+ * <li>serializes the POJO to an RDF output xml file and a TDB database.
  * </ul>
  */
 public class TestRequirementToSimulink2 {
@@ -114,14 +117,14 @@ public class TestRequirementToSimulink2 {
 			// TODO Auto-generated catch block
 			System.err.println(e.toString());
 		}
-		System.out.println("Main function finished.");
+		System.out.println("Main function finished. End of execution.");
 	}
 
 	private static String readFile(String path, Charset encoding) throws IOException {
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
 		return encoding.decode(ByteBuffer.wrap(encoded)).toString();
 	}
-	
+
 	public static synchronized void readIntegrityData() {
 
 		System.out.println("Inside Thread");
@@ -139,29 +142,29 @@ public class TestRequirementToSimulink2 {
 		String hostname = "lsdewcs9.sdde.xxxxx.com";
 		String username = "xxxxxxx";
 		String password = "xxxxxxxxx";
-		/* Read in from config.properties file
-		try {
-			fullConfigFilePath = (new File(".").getCanonicalPath()) + "\\" + localConfigFilePath;
-			System.out.println("Location of config file: " + fullConfigFilePath);
-			String str = readFile(fullConfigFilePath, Charset.defaultCharset());
-			Properties prop = new Properties();
-			prop.load(new StringReader(str.replace("\\", "/")));			
-			hostname = prop.getProperty("integrityHostName");
-			username = prop.getProperty("integrityUsername");
-			password = prop.getProperty("integrityPassword");	
-		} catch (IOException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
-		*/
+		
+// Read in from config.properties file		 
+//		try {
+//			fullConfigFilePath = (new File(".").getCanonicalPath()) + "\\" + localConfigFilePath;
+//			System.out.println("Location of config file: " + fullConfigFilePath);
+//			String str = readFile(fullConfigFilePath, Charset.defaultCharset());
+//			Properties prop = new Properties();
+//			prop.load(new StringReader(str.replace("\\", "/")));
+//			hostname = prop.getProperty("integrityHostName");
+//			username = prop.getProperty("integrityUsername");
+//			password = prop.getProperty("integrityPassword");
+//		} catch (IOException e2) { //
+//			// TODO Auto-generated catch block
+//			e2.printStackTrace();
+//		}
 
 		// read in from environment variable that is present during Jenkins job
 		// execution (uses credentials binding plugin). Ref:
 		// https://support.cloudbees.com/hc/en-us/articles/203802500-Injecting-Secrets-into-Jenkins-Build-Jobs
 		hostname = System.getenv("integrityHostName");
 		username = System.getenv("integrityUsername");
-		password = System.getenv("integrityPassword");			
-		
+		password = System.getenv("integrityPassword");
+
 		try {
 			integrationPoint = integrationPointFactory.createLocalIntegrationPoint(4, 16);
 			integrationPoint.setAutoStartIntegrityClient(true);
@@ -181,6 +184,16 @@ public class TestRequirementToSimulink2 {
 			HashMap<String, String> xmlParameterValuesMap = new HashMap<String, String>();
 			String xmlStringProductConfiguration = "";
 			String xmlStringSimulationName = "";
+
+			/*
+			 * General suggestions when formulating Integrity commands. In the
+			 * documentation if a command has a "--<option>=<value>", then that
+			 * corresponds to an "OptionList.add(option,value)". If the command
+			 * is only "--<option>" then use "OptionList.add(option,null)". If
+			 * the command only has "<selection>" (e.g. when running a query the
+			 * query name option is supplied directly, i.e. without the "--"
+			 * prefix), then use the "Command.addSelection(selection)" method.
+			 */
 
 			try {
 				queryCmdRunner = session.createCmdRunner();
@@ -215,8 +228,7 @@ public class TestRequirementToSimulink2 {
 				queryList.add("fields", queryFields);
 				queryCommand.setOptionList(queryList);
 				System.out.println("Running query: " + queryName);
-				queryResponse = queryCmdRunner.execute(queryCommand); // async
-																		// call
+				queryResponse = queryCmdRunner.execute(queryCommand);
 				System.out.println("Finished executing query: " + queryName);
 				System.out.println("Processing query: " + queryName + " results");
 
@@ -386,8 +398,7 @@ public class TestRequirementToSimulink2 {
 										queryCommand.setOptionList(queryList);
 										queryCommand.addSelection(queryName);
 										System.out.println("Running edit query: " + queryName);
-										queryResponse = queryCmdRunner.execute(queryCommand); // async
-																								// call
+										queryResponse = queryCmdRunner.execute(queryCommand);
 										System.out.println("Finished editing query: " + queryName);
 
 										System.out.println("Running query: " + queryName + " results");
@@ -410,8 +421,7 @@ public class TestRequirementToSimulink2 {
 										queryList.add("fields", queryFields);
 										queryCommand.setOptionList(queryList);
 										System.out.println("Running query: " + queryName);
-										queryResponse = queryCmdRunner.execute(queryCommand); // async
-																								// call
+										queryResponse = queryCmdRunner.execute(queryCommand);
 										System.out.println("Finished executing query: " + queryName);
 										System.out.println("Processing query: " + queryName + " results");
 
@@ -438,8 +448,7 @@ public class TestRequirementToSimulink2 {
 												if (fieldObject instanceof Field) {
 													field = (Field) fieldObject;
 													System.out.println("Field name = " + field.getName());
-													System.out
-															.println("Field display name = " + field.getDisplayName());
+													System.out.println("Field display name = " + field.getDisplayName());
 													if (field.getName().equals("Category")) {
 														System.out.println("Reading Category field");
 														fieldValue = field.getValue();
@@ -485,7 +494,20 @@ public class TestRequirementToSimulink2 {
 						}
 					}
 				}
-				System.out.println(queryResponse.getWorkItems().next().getFields().next().toString());
+				System.out.println("Disconnect user from host with no confirm");
+				CmdRunner disconnectSessionCmdRunner = session.createCmdRunner();
+				// "aa disconnect --hostname=xxxx --user=xxxx --[no]confirm
+				Command disconnectCommand = new Command(Command.AA, "disconnect");
+				OptionList disconnectCmdList = new OptionList();
+				// the static block in OSLC4JIn... class calls APIs
+				disconnectCmdList.add("hostname", hostname);
+				disconnectCmdList.add("user", username);
+				disconnectCmdList.add("noconfirm", null);
+				disconnectCommand.setOptionList(disconnectCmdList);
+				System.out.println("Running command to disconnect");
+				Response disconnectResponse = disconnectSessionCmdRunner.execute(disconnectCommand);
+				System.out.println(disconnectResponse.getResult().getMessage());
+
 				System.out.println("End Integrity API call");
 				integrationPointFactory.removeIntegrationPoint(integrationPoint);
 				System.out.println("Removing integration point to terminate thread.");
@@ -494,9 +516,9 @@ public class TestRequirementToSimulink2 {
 				System.err.println(e.toString());
 			}
 
-			//================================================================
+			// ================================================================
 			// create output XML file
-			//================================================================
+			// ================================================================
 			System.out.println("\n\n");
 			System.out.println("Output XML file section");
 			System.out.println(xmlStringProject);
@@ -576,9 +598,9 @@ public class TestRequirementToSimulink2 {
 
 			System.out.println("File saved!");
 
-			//================================================================
-			// create ecore object 
-			//================================================================
+			// ================================================================
+			// create ecore object
+			// ================================================================
 			System.out.println("Creating Ecore model");
 			Project ecoreProject = IntegrityNewFactory.eINSTANCE.createProject();
 			ecoreProject.setId(xmlStringProjectID);
@@ -588,40 +610,40 @@ public class TestRequirementToSimulink2 {
 
 			ecoreRequirement.setId(xmlStringID);
 			ecoreRequirement.setName(xmlStringName);
-			ecoreRequirement.setText(xmlStringText);		
-			
+			ecoreRequirement.setText(xmlStringText);
+
 			ParameterValues ecoreParamValue = IntegrityNewFactory.eINSTANCE.createParameterValues();
 			ecoreParamValue.setLowerLimit(xmlParameterValuesMap.get("lowerLimit"));
 			ecoreParamValue.setUpperLimit(xmlParameterValuesMap.get("upperLimit"));
 			ecoreParamValue.setUnit(xmlParameterValuesMap.get("unit"));
 			ecoreRequirement.setParameterValues(ecoreParamValue);
-			
+
 			ProductConfiguration ecoreProdConfig = IntegrityNewFactory.eINSTANCE.createProductConfiguration();
 			ecoreProdConfig.setName(xmlStringProductConfiguration);
 			ecoreRequirement.setProductConfiguration(ecoreProdConfig);
-			
+
 			SimulationName ecoreSimName = IntegrityNewFactory.eINSTANCE.createSimulationName();
-			ecoreSimName.setName(xmlStringSimulationName);			
+			ecoreSimName.setName(xmlStringSimulationName);
 			ecoreRequirement.setSimulationName(ecoreSimName);
-			
+
 			System.out.println("adding content to ecore objects");
-			
-			//================================================================
+
+			// ================================================================
 			// create rdf-compatible object (using Java classes generated from
 			// ecore model with OSLC annotations
-			//================================================================
+			// ================================================================
 			String URIprefix = "http://IntegrityExecutableRequirements/#";
-			
+
 			IntegrityProject rdfProject = new IntegrityProject();
 			IntegrityRequirement rdfRequirement = new IntegrityRequirement();
 			IntegrityParameterValues rdfParamValue = new IntegrityParameterValues();
 			IntegrityProductConfiguration rdfProdConfig = new IntegrityProductConfiguration();
 			IntegritySimulationName rdfSimName = new IntegritySimulationName();
-			
+
 			rdfProject.setAbout(URI.create(URIprefix + "projectID" + xmlStringProjectID));
 			rdfProject.setId(xmlStringProjectID);
 			rdfProject.setName(xmlStringProject);
-			
+
 			rdfRequirement.setId(xmlStringID);
 			rdfRequirement.setName(xmlStringName);
 			rdfRequirement.setText(xmlStringText);
@@ -630,27 +652,28 @@ public class TestRequirementToSimulink2 {
 			rdfParamValue.setLowerLimit(xmlParameterValuesMap.get("lowerLimit"));
 			rdfParamValue.setUpperLimit(xmlParameterValuesMap.get("upperLimit"));
 			rdfParamValue.setUnit(xmlParameterValuesMap.get("unit"));
-			rdfParamValue.setAbout(URI.create(URIprefix + "paramValueForRequirementID" + xmlStringID));			
+			rdfParamValue.setAbout(URI.create(URIprefix + "paramValueForRequirementID" + xmlStringID));
 			rdfRequirement.setParameterValues(rdfParamValue.getAbout());
-			
+
 			rdfProdConfig.setName(xmlStringProductConfiguration);
 			rdfProdConfig.setAbout(URI.create(URIprefix + "productConfigForRequirementID" + xmlStringID));
 			rdfRequirement.setProductConfiguration(rdfProdConfig.getAbout());
-			
+
 			rdfSimName.setName(xmlStringSimulationName);
 			rdfSimName.setAbout(URI.create(URIprefix + "simulationNameForRequirementID" + xmlStringID));
 			rdfRequirement.setSimulationName(rdfSimName.getAbout());
 
-			// important to assign relationships AFTER the URIs are created on the child objects
-			Link[] linkReq2Project = new Link[1]; 
+			// important to assign relationships AFTER the URIs are created on
+			// the child objects
+			Link[] linkReq2Project = new Link[1];
 			linkReq2Project[0] = new Link(rdfRequirement.getAbout());
 			rdfProject.setRequirements(linkReq2Project);
 
 			System.out.println("finished creating RDF compatible object");
 
-			//================================================================
-			// write to rdf file 
-			//================================================================
+			// ================================================================
+			// write to rdf file
+			// ================================================================
 			System.out.println("Starting to write RDF output file");
 			ArrayList<Object> objectList = new ArrayList<Object>();
 			objectList.add(rdfProject);
@@ -658,15 +681,16 @@ public class TestRequirementToSimulink2 {
 			objectList.add(rdfParamValue);
 			objectList.add(rdfProdConfig);
 			objectList.add(rdfSimName);
-			
+
 			int arraySize = objectList.size();
 			Object[] objects = new Object[arraySize];
 			objects = objectList.toArray();
 
 			try {
 				Model model = JenaModelHelper.createJenaModel(objects);
-				String rdfFormat = "RDF/XML"; // "RDF/XML", "RDF/XML-ABBREV", "N-TRIPLES"
-				RDFWriter writer = model.getWriter(rdfFormat); 
+				// "RDF/XML", "RDF/XML-ABBREV", "N-TRIPLES"
+				String rdfFormat = "RDF/XML"; 
+				RDFWriter writer = model.getWriter(rdfFormat);
 				writer.setProperty("showXmlDeclaration", "false");
 				writer.setErrorHandler(new ErrorHandler());
 				String rdfFileName = "rdfForRequirementID_" + xmlStringID + ".xml";
@@ -688,9 +712,9 @@ public class TestRequirementToSimulink2 {
 				e.printStackTrace();
 			}
 
-			//================================================================
-			// write to triple store database in folder 
-			//================================================================
+			// ================================================================
+			// write to triple store database in folder
+			// ================================================================
 			try {
 				System.out.println("Starting to write TDB output");
 				String tdbdir = "./TDBoutput";
@@ -704,7 +728,6 @@ public class TestRequirementToSimulink2 {
 				Model model = JenaModelHelper.createJenaModel(objects);
 				Dataset dataset = TDBFactory.createDataset(tdbdir);
 				Model tdbModel = dataset.getDefaultModel();
-//				System.out.println(tdbModel.
 				// read in existing model from TDB directory
 				tdbModel.add(model);
 				dataset.close();
@@ -718,7 +741,7 @@ public class TestRequirementToSimulink2 {
 				System.err.println("");
 			} catch (Exception e) {
 				System.err.println(e.getMessage());
-				System.err.println("");				
+				System.err.println("");
 			}
 		} catch (Exception e) {
 			System.err.println(e.toString());
