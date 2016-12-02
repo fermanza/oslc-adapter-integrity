@@ -375,7 +375,7 @@ public class TestRequirementToSimulink2 {
 										System.out.println("");
 									}
 								}
-								System.out.println("Requirement Ids to read in: " + requiresRelationshipIDs.toString());
+								System.out.println("Requirement requires relationship Ids to read in: " + requiresRelationshipIDs.toString());
 								System.out.println("");
 
 								if (!requiresRelationshipIDs.isEmpty()) {
@@ -519,8 +519,8 @@ public class TestRequirementToSimulink2 {
 			// ================================================================
 			// create output XML file
 			// ================================================================
-			System.out.println("\n\n");
-			System.out.println("Output XML file section");
+			System.out.println("\n\n\n");
+			System.out.println("XML for DSM simulation file section");
 			System.out.println(xmlStringProject);
 			System.out.println(xmlStringCategory);
 			System.out.println(xmlStringID);
@@ -529,7 +529,7 @@ public class TestRequirementToSimulink2 {
 			System.out.println(xmlStringParameterValues);
 			System.out.println(xmlStringProductConfiguration);
 			System.out.println(xmlStringSimulationName);
-			System.out.println("");
+			System.out.println("Creating XML file");
 
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -597,10 +597,11 @@ public class TestRequirementToSimulink2 {
 			transformer.transform(source, result);
 
 			System.out.println("File saved!");
-
+			
 			// ================================================================
 			// create ecore object
 			// ================================================================
+			System.out.println("\n\n\n");
 			System.out.println("Creating Ecore model");
 			Project ecoreProject = IntegrityNewFactory.eINSTANCE.createProject();
 			ecoreProject.setId(xmlStringProjectID);
@@ -674,6 +675,7 @@ public class TestRequirementToSimulink2 {
 			// ================================================================
 			// write to rdf file
 			// ================================================================
+			System.out.println("\n\n\n");
 			System.out.println("Starting to write RDF output file");
 			ArrayList<Object> objectList = new ArrayList<Object>();
 			objectList.add(rdfProject);
@@ -716,6 +718,7 @@ public class TestRequirementToSimulink2 {
 			// write to triple store database in folder
 			// ================================================================
 			try {
+				System.out.println("\n\n\n");
 				System.out.println("Starting to write TDB output");
 				String tdbdir = "./TDBoutput";
 				File tdbdirFile = new File(tdbdir);
